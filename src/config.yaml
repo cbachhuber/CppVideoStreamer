@@ -1,0 +1,37 @@
+%YAML:1.0
+
+#--------------------------------------------------------------------------------------------
+# Network Parameters
+#--------------------------------------------------------------------------------------------
+port: 5001
+
+#--------------------------------------------------------------------------------------------
+# Camera Parameters: Relevant for all cameras
+#--------------------------------------------------------------------------------------------
+
+# Pixels in video read out from the sensor
+camera.width: 1280
+camera.height: 720
+# Frame rate of the camera
+camera.fps: 90.0
+
+#--------------------------------------------------------------------------------------------
+# Camera Parameters: Relevant for special cameras such as XIMEA
+#--------------------------------------------------------------------------------------------
+
+# Camera identifier string, called name
+camera.name: LeftEye
+# Pixels on the sensor.
+camera.sensor_width: 2048
+camera.sensor_height: 1088
+# Color coefficients
+camera.r_coeff: 1.0
+camera.g_coeff: 1.0
+camera.b_coeff: 1.0
+
+#--------------------------------------------------------------------------------------------
+# Streamed video parameters. Scaling done automatically if e.g. video.width != camera.width
+#--------------------------------------------------------------------------------------------
+
+video.width: 1280
+video.height: 720
