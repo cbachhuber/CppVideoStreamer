@@ -28,7 +28,7 @@ change into the cloned directory (`cd Streamer`), create a build folder, and cha
 cmake ..
 ```
 
-to configure the project. Now, still in the build-folder, you can use `make` to build the binaries. Per default, the project only builds the USB camera sample, not requiring any Ximea software. If you would like to build the Ximea sample, add the flag `-DBUILD_XIMEA=ON` to the cmake command.
+to configure the project. Now, still in the build-folder, you can use `make` to build the binaries. Per default, the project only builds the USB camera sample, not requiring any Ximea software. If you would like to build the Ximea sample, add the flag `-DBUILD_XIMEA=ON` to the cmake command, such that it reads `cmake -DBUILD_XIMEA=ON ..`.
 
 ## Starting the program
 
