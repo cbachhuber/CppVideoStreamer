@@ -1,6 +1,6 @@
 # C++ USB camera video streamer
 
-You want to stream low latency h.264-video from a USB camera? Use this code! Thanks to its modular structure, the camera frame grabber can be easily replaced by code for other cameras such as Ximea industrial cameras, as shown in the second example. Video parameters such as resolution and frame rate can be set in the [config file](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml).
+You want to stream a low latency h.264-video from a camera? Use this code! Thanks to its modular structure, the USB camera frame grabber can be easily replaced by code for other cameras such as [Ximea industrial cameras](https://www.ximea.com/), as shown in the second example. Video parameters such as resolution and frame rate can be set in the [config file](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml).
 
 This project is intended to kickstart C++ projects that require low latency video streaming and to provide a sample implementation of the x264 video encoder in C++.
 
@@ -22,13 +22,13 @@ Clone this repository into a folder of your choice
 git clone https://github.com/cbachhuber/CppVideoStreamer
 ```
 
-change into the cloned directory (`cd Streamer`), create a build folder, and change into it (`mkdir build && cd build`). Within the build folder, execute
+change into the cloned directory (`cd CppVideoStreamer`), create a build folder, and change into it (`mkdir build && cd build`). Within the build folder, execute
 
 ```
 cmake ..
 ```
 
-to configure the project. Now, still in the build-folder, you can use `make` to build the binaries. Per default, the project only builds the USB camera sample, not requiring any Ximea software. If you would like to build the Ximea sample, add the flag `-DBUILD_XIMEA=ON` to the cmake command, such that it reads `cmake -DBUILD_XIMEA=ON ..`.
+to configure the build files. Now, still in the build-folder, you can use `make` to build the binaries. Per default, the project only builds the USB camera sample, not requiring any Ximea software. If you would like to build the Ximea sample, add the flag `-DBUILD_XIMEA=ON` to the cmake command, such that it reads `cmake -DBUILD_XIMEA=ON ..`.
 
 ## Starting the program
 
@@ -51,4 +51,4 @@ ffplay  -probesize 32 -sync ext tcp://127.0.0.1:5001
 
 in an additional terminal to connect to the open port and start playing back the streamed video. The streamer will now proceed to open the camera defined in [config.yaml](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml) and will finally stream the camera feed to the ffplay player instance. Note that ffplay, even with the above low latency settings, adds considerable delay.
 
-You can gracefully quit both programs by pressing `q` while in the video player. This will quit the player, and inform the streamer that the TCP partner has shut down, which causes the streamer to close the camera and terminate.
+You can gracefully quit both programs by pressing `q` while in the ffplay video player. This will quit the player, and inform the streamer that the TCP partner has shut down, which causes the streamer to close the camera and terminate.
