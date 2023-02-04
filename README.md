@@ -52,3 +52,9 @@ ffplay  -probesize 32 -sync ext tcp://127.0.0.1:5001
 in an additional terminal to connect to the open port and start playing back the streamed video. The streamer will now proceed to open the camera defined in [config.yaml](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml) and will finally stream the camera feed to the ffplay player instance. Note that ffplay, even with the above low latency settings, adds considerable delay.
 
 You can gracefully quit both programs by pressing `q` while in the ffplay video player. This will quit the player, and inform the streamer that the TCP partner has shut down, which causes the streamer to close the camera and terminate.
+
+## License
+
+This repository is [licensed under GPL-3.0](./LICENSE).
+We'd prefer to have a more permissive license, however, we're depending on [x264](https://www.videolan.org/developers/x264.html) which itself has a GPL license.
+That [forces us to use GPL as well](https://en.wikipedia.org/wiki/GNU_General_Public_License#:~:text=Only%20if%20GPLed%20parts%20are%20used%20in%20a%20program%20(and%20the%20program%20is%20distributed)%2C%20then%20all%20other%20source%20code%20of%20the%20program%20needs%20to%20be%20made%20available%20under%20the%20same%20license%20terms).
