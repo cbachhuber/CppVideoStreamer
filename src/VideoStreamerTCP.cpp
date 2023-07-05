@@ -7,6 +7,8 @@
 #include "encoder.hpp"
 #include "tcpSocket.hpp"
 
+#include <opencv2/core.hpp>
+
 #include <chrono>
 #include <stdio.h>
 #include <iostream>

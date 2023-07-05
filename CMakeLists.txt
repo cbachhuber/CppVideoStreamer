@@ -16,6 +16,7 @@ else()
 endif()
 
 # Build instructions for USB cam application
+find_package(OpenCV 4.0.0 REQUIRED)
 set(LIBS
     opencv_core opencv_highgui opencv_imgproc opencv_videoio  # OpenCV related libs
     x264 swscale avformat avcodec avutil swresample  # x264 and ffmpeg libs
@@ -27,7 +28,7 @@ add_executable(usbCamStreamer
     src/encoder.cpp
     src/tcpSocket.cpp
 )
-target_link_libraries(usbCamStreamer ${LIBS})
+target_link_libraries(usbCamStreamer PRIVATE ${LIBS})
 
 if(BUILD_XIMEA)
   set(LIBS ${LIBS} m3api)  # Ximea API
