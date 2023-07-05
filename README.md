@@ -18,17 +18,15 @@ For compiling the Ximea sample (disabled by default), the following additional s
 
 Clone this repository into a folder of your choice
 
-```
-git clone https://github.com/cbachhuber/CppVideoStreamer
-```
-
-change into the cloned directory (`cd CppVideoStreamer`), create a build folder, and change into it (`mkdir build && cd build`). Within the build folder, execute
-
-```
-cmake ..
+```sh
+git clone https://github.com/cbachhuber/CppVideoStreamer  # clone the repository
+cd CppVideoStreamer  # change into the cloned directory
+mkdir build && cd build  # create a build folder, and change into it
+cmake ..  # configure the build files
+make  # build the binaries
 ```
 
-to configure the build files. Now, still in the build-folder, you can use `make` to build the binaries. Per default, the project only builds the USB camera sample, not requiring any Ximea software. If you would like to build the Ximea sample, add the flag `-DBUILD_XIMEA=ON` to the cmake command, such that it reads `cmake -DBUILD_XIMEA=ON ..`.
+Per default, the project only builds the USB camera sample, not requiring any Ximea software. If you would like to build the Ximea sample, add the flag `-DBUILD_XIMEA=ON` to the cmake command, such that it reads `cmake -DBUILD_XIMEA=ON ..`.
 
 ## Starting the program
 
