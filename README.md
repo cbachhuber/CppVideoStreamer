@@ -8,7 +8,7 @@ This project is intended to kickstart C++ projects that require low latency vide
 
 This code has been tested on Ubuntu 16.04 LTS. The project relies on the multi-platform libraries OpenCV, ffmpeg, and x264. Thus, the following Ubuntu-specific instructions are similar on other platforms such as OS X or Windows. The following software is required for both code samples.
 
-- Install CMake, build-essential, FFmpeg, x264, and OpenCV: `sudo apt install -y build-essential cmake ffmpeg x264 libopencv-dev`
+- Install CMake, build-essential, FFmpeg, x264, and OpenCV: `sudo apt install -y build-essential cmake ffmpeg libx264-dev x264 libopencv-dev`
 
 For compiling the Ximea sample (disabled by default), the following additional setup steps need to be performed:
 - Install the [Camera driver and SDK](https://www.ximea.com/support/wiki/apis/XIMEA_Linux_Software_Package). Installation is described on the linked webpage. During installation, do not use the -pcie argument.
