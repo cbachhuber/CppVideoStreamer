@@ -29,7 +29,7 @@ add_executable(usbCamStreamer
 )
 target_link_libraries(usbCamStreamer ${LIBS})
 
-if(BUILD_XIMEA_EXAMPLE)
+if(BUILD_XIMEA)
   set(LIBS ${LIBS} m3api)  # Ximea API
   add_executable(ximeaStreamer
     src/VideoStreamerTCP.cpp
@@ -39,4 +39,4 @@ if(BUILD_XIMEA_EXAMPLE)
     src/tcpSocket.cpp
   )
   target_link_libraries(ximeaStreamer ${LIBS})
-endif(BUILD_XIMEA_EXAMPLE)
+endif(BUILD_XIMEA)

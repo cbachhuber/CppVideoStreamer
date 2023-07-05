@@ -1,4 +1,9 @@
+#ifdef BUILD_XIMEA
 #include "ximeaCameraFrameGrabber.hpp"
+#else
+#include "usbCameraFrameGrabber.hpp"
+#endif
+
 #include "encoder.hpp"
 #include "tcpSocket.hpp"
 
