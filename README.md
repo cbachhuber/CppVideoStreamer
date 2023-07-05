@@ -32,18 +32,18 @@ Per default, the project only builds the USB camera sample, not requiring any Xi
 
 Before starting the program, adjust the settings in [config.yaml](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml) to your requirements. You can then start the programs from the build folder using
 
-```
+```sh
 ./usbCamStreamer
 ```
 
 This will run the streamer program, which defaults to read the config file in `../src/config.yaml` relative to the executable. Alternatively, you can define the location of the config file as command line argument of the application, e.g.
 
-```
+```sh
 ./usbCamStreamer ../src/config.yaml
 ```
 has the same effect as calling with no parameter. The analog procedure can be performed for the Ximea sample, for which the executable is called `ximeaStreamer`. At startup, both programs wait for a client to connect to the opened TCP socket, which is [per default](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml#L6) on localhost, port 5001. If you do not yet have a video sink, you can run
 
-```
+```sh
 ffplay  -probesize 32 -sync ext tcp://127.0.0.1:5001
 ```
 
