@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.4.6)
+cmake_minimum_required(VERSION 3.1)
 
 add_subdirectory(receiver)
 add_subdirectory(sender)

@@ -8,7 +8,7 @@ This project is intended to kickstart C++ projects that require low latency vide
 
 This code has been tested on Ubuntu 16.04 LTS. The project relies on the multi-platform libraries OpenCV, ffmpeg, and x264. Thus, the following Ubuntu-specific instructions are similar on other platforms such as OS X or Windows. The following software is required for both code samples.
 
-- Install CMake, build-essential, FFmpeg, x264, and OpenCV: `sudo apt install -y build-essential cmake ffmpeg libx264-dev x264 libopencv-dev libva-dev`
+- Install CMake, build-essential, FFmpeg, x264, and OpenCV: `sudo apt install -y build-essential cmake ffmpeg libx264-dev x264 libopencv-dev libva-dev libsdl2-dev`
 
 For compiling the Ximea sample (disabled by default), the following additional setup steps need to be performed:
 - Install the [Camera driver and SDK](https://www.ximea.com/support/wiki/apis/XIMEA_Linux_Software_Package). Installation is described on the linked webpage. During installation, do not use the -pcie argument.
@@ -47,9 +47,20 @@ has the same effect as calling with no parameter. The analog procedure can be pe
 ffplay  -probesize 32 -sync ext tcp://127.0.0.1:5001
 ```
 
-in an additional terminal to connect to the open port and start playing back the streamed video. The streamer will now proceed to open the camera defined in [config.yaml](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml) and will finally stream the camera feed to the ffplay player instance. Note that ffplay, even with the above low latency settings, adds considerable delay.
+in an additional terminal to connect to the open port and start playing back the streamed video. The streamer will now proceed to open the camera defined in [config.yaml](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml) and will finally stream the camera feed to the ffplay player instance. Note that ffplay, even with the above low latency settings, adds considerable delay. An alternative player is listed under
 
 You can gracefully quit both programs by pressing `q` while in the ffplay video player. This will quit the player, and inform the streamer that the TCP partner has shut down, which causes the streamer to close the camera and terminate.
+
+## Alternative video player
+
+Under [src/receiver](src/receiver/), a stub of a video player is provided.
+It is written in C++ and uses [SDL2](https://wiki.libsdl.org/SDL2/FrontPage) to display the video.
+Barebone interaction to control latency and to quit the program has been implemented.
+Set variable [video_url](src/receiver/VideoPlayer.cpp#L7) to the URL of the video stream, and configure and compile the program using commands from [building](#building). Then, run the program when the streamer is already running, from your build directory with
+
+```sh
+./src/receiver/video_player
+```
 
 ## License
 
