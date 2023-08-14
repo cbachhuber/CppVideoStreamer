@@ -47,7 +47,7 @@ has the same effect as calling with no parameter. The analog procedure can be pe
 ffplay  -probesize 32 -sync ext tcp://127.0.0.1:5001
 ```
 
-in an additional terminal to connect to the open port and start playing back the streamed video. The streamer will now proceed to open the camera defined in [config.yaml](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml) and will finally stream the camera feed to the ffplay player instance. Note that ffplay, even with the above low latency settings, adds considerable delay. An alternative player is listed under
+in an additional terminal to connect to the open port and start playing back the streamed video. The streamer will now proceed to open the camera defined in [config.yaml](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml) and will finally stream the camera feed to the ffplay player instance. Note that ffplay, even with the above low latency settings, adds considerable delay. An alternative player is listed under [Alternative video player](#alternative-video-player).
 
 You can gracefully quit both programs by pressing `q` while in the ffplay video player. This will quit the player, and inform the streamer that the TCP partner has shut down, which causes the streamer to close the camera and terminate.
 
