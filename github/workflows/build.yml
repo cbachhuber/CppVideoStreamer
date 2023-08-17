@@ -1,0 +1,22 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: check out git repository
+      uses: actions/checkout@v2
+    - name: install dependencies
+      run: sudo apt update && sudo apt install -y build-essential cmake ffmpeg libx264-dev x264 libopencv-dev libva-dev libsdl2-dev
+    - name: configure
+      run: mkdir -p build && cd build && cmake ..
+    - name: build
+      run: cd build && make
