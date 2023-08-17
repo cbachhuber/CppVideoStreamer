@@ -1,5 +1,7 @@
 # C++ USB camera video streamer
 
+![Build](https://github.com/cbachhuber/CppVideoStreamer/workflows/Build/badge.svg)
+
 You want to stream a low latency h.264-video from a camera? Use this code! Thanks to its modular structure, the USB camera frame grabber can be easily replaced by code for other cameras such as [Ximea industrial cameras](https://www.ximea.com/), as shown in the second example. Video parameters such as resolution and frame rate can be set in the [config file](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml).
 
 This project is intended to kickstart C++ projects that require low latency video streaming and to provide a sample implementation of the x264 video encoder in C++.
