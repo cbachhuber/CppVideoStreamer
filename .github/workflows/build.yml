@@ -10,7 +10,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
+    runs-on: ${{ matrix.os }}
     steps:
     - name: check out git repository
       uses: actions/checkout@v2
