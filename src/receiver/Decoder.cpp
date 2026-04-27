@@ -117,10 +117,12 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
     //---------------------------------------------------------------------------------------------------
     // Simple startup without retrieving any stream info
     AVCodecContext* cctx;
-    AVCodec* codec;
+    const AVCodec* codec;
     AVFrame* frame;
 
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(58, 9, 100)
     av_register_all();
+#endif
 
     codec = avcodec_find_decoder(AV_CODEC_ID_H264);
     cctx = avcodec_alloc_context3(codec);
@@ -176,8 +178,7 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
 
     while (!readyToQuit)
     {
-        AVPacket* pkt = new AVPacket;
-        av_init_packet(pkt);
+        AVPacket* pkt = av_packet_alloc();
         int ret = av_read_frame(fctx, pkt);
         // Packets with a size equal to 100
         // bytes are dummy packets.
@@ -253,7 +254,7 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
 #endif
         }
 
-        av_packet_unref(pkt);
+        av_packet_free(&pkt);
     }
 
     //---------------------------------------------------------------------------------------------------
