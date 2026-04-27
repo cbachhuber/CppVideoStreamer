@@ -22,4 +22,4 @@ jobs:
     - name: configure
       run: mkdir -p build && cd build && cmake ..
     - name: build
-      run: cd build && make
+      run: cd build && cmake --build .
