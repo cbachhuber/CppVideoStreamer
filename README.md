@@ -2,63 +2,81 @@
 
 ![Build](https://github.com/cbachhuber/CppVideoStreamer/workflows/Build/badge.svg)
 
-You want to stream a low latency h.264-video from a camera? Use this code! Thanks to its modular structure, the USB camera frame grabber can be easily replaced by code for other cameras such as [Ximea industrial cameras](https://www.ximea.com/), as shown in the second example. Video parameters such as resolution and frame rate can be set in the [config file](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml).
+You want to stream a low latency h.264-video from a camera?
+Use this code!
+Thanks to its modular structure, the USB camera frame grabber can be easily replaced by code for other cameras such as [Ximea industrial cameras](https://www.ximea.com/), as shown in the second example.
+Video parameters such as resolution and frame rate can be set in the [config file](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml).
 
 This project is intended to kickstart C++ projects that require low latency video streaming and to provide a sample implementation of the x264 video encoder in C++.
 
 ## Software Prerequisites
 
-This code is [continuously built on the latest Ubuntu](.github/workflows/build.yml). The project relies on the multi-platform libraries OpenCV, ffmpeg, and x264. Thus, the following Ubuntu-specific instructions are similar on other platforms such as OS X or Windows. The following software is required for both code samples.
+This code is [continuously built on the latest Ubuntu](.github/workflows/build.yml).
+The project relies on the multi-platform libraries OpenCV, ffmpeg, and x264.
+Thus, the following Ubuntu-specific instructions are similar on other platforms such as OS X or Windows.
+The following software is required for both code samples:
 
-- Install CMake, build-essential, FFmpeg, x264, and OpenCV: `sudo apt install -y build-essential cmake ffmpeg libx264-dev x264 libopencv-dev libva-dev libsdl2-dev`
+```sh
+sudo apt install -y build-essential cmake ffmpeg libx264-dev x264 libopencv-dev libva-dev libsdl2-dev
+```
 
 For compiling the Ximea sample (disabled by default), the following additional setup steps need to be performed:
-- Install the [Camera driver and SDK](https://www.ximea.com/support/wiki/apis/XIMEA_Linux_Software_Package). Installation is described on the linked webpage. During installation, do not use the -pcie argument.
+
+- Install the [Camera driver and SDK](https://www.ximea.com/support/wiki/apis/XIMEA_Linux_Software_Package).
+  Installation is described on the linked webpage. During installation, do not use the -pcie argument.
 - After installation, increase the USB buffer size in Linux (add 'echo 0 > /sys/module/usbcore/parameters/usbfs_memory_mb' to /etc/rc.local) and [allow the application to run in realtime](https://www.ximea.com/support/wiki/apis/Linux_USB30_Support#Allow-to-Run-Application-Realtime).
 
 ## Building
 
-Clone this repository into a folder of your choice
-
 ```sh
-git clone https://github.com/cbachhuber/CppVideoStreamer  # clone the repository
-cd CppVideoStreamer  # change into the cloned directory
-mkdir build && cd build  # create a build folder, and change into it
-cmake ..  # configure the build files
-make  # build the binaries
+mkdir build && cd build
+cmake ..
+cmake --build .
 ```
 
-Per default, the project only builds the USB camera sample, not requiring any Ximea software. If you would like to build the Ximea sample, add the flag `-DBUILD_XIMEA=ON` to the cmake command, such that it reads `cmake -DBUILD_XIMEA=ON ..`.
+Per default, the project only builds the USB camera sample, not requiring any Ximea software.
+If you would like to build the Ximea sample, add the flag `-DBUILD_XIMEA=ON` to the cmake command, such that it reads `cmake -DBUILD_XIMEA=ON ..`.
 
 ## Starting the program
 
-Before starting the program, adjust the settings in [config.yaml](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml) to your requirements. You can then start the programs from the build folder using
+Before starting the program, adjust the settings in [config.yaml](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml) to your requirements.
+You can then start the programs from the build folder using
 
 ```sh
 ./usbCamStreamer
 ```
 
-This will run the streamer program, which defaults to read the config file in `../src/config.yaml` relative to the executable. Alternatively, you can define the location of the config file as command line argument of the application, e.g.
+This will run the streamer program, which defaults to read the config file in `../src/config.yaml` relative to the executable.
+Alternatively, you can define the location of the config file as command line argument of the application, e.g.
 
 ```sh
 ./usbCamStreamer ../src/config.yaml
 ```
-has the same effect as calling with no parameter. The analog procedure can be performed for the Ximea sample, for which the executable is called `ximeaStreamer`. At startup, both programs wait for a client to connect to the opened TCP socket, which is [per default](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml#L6) on localhost, port 5001. If you do not yet have a video sink, you can run
+
+has the same effect as calling with no parameter.
+The analog procedure can be performed for the Ximea sample, for which the executable is called `ximeaStreamer`.
+At startup, both programs wait for a client to connect to the opened TCP socket, which is [per default](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml#L6) on localhost, port 5001.
+If you do not yet have a video sink, you can run
 
 ```sh
 ffplay  -probesize 32 -sync ext tcp://127.0.0.1:5001
 ```
 
-in an additional terminal to connect to the open port and start playing back the streamed video. The streamer will now proceed to open the camera defined in [config.yaml](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml) and will finally stream the camera feed to the ffplay player instance. Note that ffplay, even with the above low latency settings, adds considerable delay. An alternative player is listed under [Alternative video player](#alternative-video-player).
+in an additional terminal to connect to the open port and start playing back the streamed video.
+The streamer will now proceed to open the camera defined in [config.yaml](https://github.com/cbachhuber/CppVideoStreamer/blob/master/src/config.yaml) and will finally stream the camera feed to the `ffplay` player instance.
+Note that `ffplay`, even with the above low latency settings, adds considerable delay.
+An alternative player is listed under [Alternative video player](#alternative-video-player).
 
-You can gracefully quit both programs by pressing `q` while in the ffplay video player. This will quit the player, and inform the streamer that the TCP partner has shut down, which causes the streamer to close the camera and terminate.
+You can gracefully quit both programs by pressing `q` while in the ffplay video player.
+This will quit the player, and inform the streamer that the TCP partner has shut down, which causes the streamer to close the camera and terminate.
 
 ## Alternative video player
 
 Under [src/receiver](src/receiver/), a stub of a video player is provided.
 It is written in C++ and uses [SDL2](https://wiki.libsdl.org/SDL2/FrontPage) to display the video.
 Barebone interaction to control latency and to quit the program has been implemented.
-Set variable [video_url](src/receiver/VideoPlayer.cpp#L7) to the URL of the video stream, and configure and compile the program using commands from [building](#building). Then, run the program when the streamer is already running, from your build directory with
+Set variable [video_url](src/receiver/VideoPlayer.cpp#L7) to the URL of the video stream, and configure and compile the program using commands from [building](#building).
+Then, run the program when the streamer is already running, from your build directory with
 
 ```sh
 ./src/receiver/video_player
