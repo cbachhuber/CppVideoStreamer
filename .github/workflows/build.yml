@@ -21,12 +21,12 @@ jobs:
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
         packages: build-essential cmake ffmpeg libx264-dev x264 libopencv-dev libva-dev libsdl2-dev
-        version: 1.0 # bump this if you change the package list to invalidate the cache
+        version: ${{ matrix.os }}-1.0 # bump this if you change the package list to invalidate the cache
     - name: cache development apt packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
         packages: clang-tidy
-        version: 1.0 # bump this if you change the package list to invalidate the cache
+        version: ${{ matrix.os }}-1.0 # bump this if you change the package list to invalidate the cache
     - name: configure
       run: mkdir -p build && cd build && cmake .. -DENABLE_CLANG_TIDY=ON
     - name: build
