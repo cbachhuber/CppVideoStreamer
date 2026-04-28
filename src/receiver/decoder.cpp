@@ -1,4 +1,4 @@
-#include "Decoder.h"
+#include "decoder.h"
 
 #include <list>
 
@@ -11,18 +11,20 @@
 
 // Serial port includes
 #include <errno.h>  //Error number definitions
+
 #include <iomanip>
+
 #include <fcntl.h>    //File control definitions
 #include <termios.h>  //POSIX terminal control definitions
 #include <unistd.h>
 
-//#define ARDUINO_MSMT
+// #define ARDUINO_MSMT
 #define MSGLENGTH 30
 
 void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
 {
     //---------------------------------------------------------------------------------------------------
-    //----------------------------   Variable intializations
+    //----------------------------   Variable initializations
     //--------------------------------------------
     //---------------------------------------------------------------------------------------------------
 
@@ -38,7 +40,7 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
     std::list<AVPacket> pktlist;
 #endif
     //---------------------------------------------------------------------------------------------------
-    //----------------------------   Arduino intialization --------------------------------------------
+    //----------------------------   Arduino initialization --------------------------------------------
     //---------------------------------------------------------------------------------------------------
 
 #ifdef ARDUINO_MSMT
@@ -112,7 +114,7 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
 #endif
 
     //---------------------------------------------------------------------------------------------------
-    //----------------------------   Libav intialization
+    //----------------------------   Libav initialization
     //----------------------------------------------
     //---------------------------------------------------------------------------------------------------
     // Simple startup without retrieving any stream info
@@ -154,7 +156,7 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
     }
 
     //---------------------------------------------------------------------------------------------------
-    //----------------------------   CSP conversion intialization
+    //----------------------------   CSP conversion initialization
     //-------------------------------------
     //---------------------------------------------------------------------------------------------------
     m_pSwsCtxYuv2Bgra = sws_getContext(

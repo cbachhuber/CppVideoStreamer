@@ -1,8 +1,10 @@
 #include <iomanip>
+
 #include <SDL2/SDL.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include "Decoder.h"
+
+#include "decoder.h"
 
 const char* video_url = "tcp://127.0.0.1:5001";
 // const char * video_url = "tcp://10.152.4.207:5000";
@@ -45,7 +47,7 @@ int main(int argc, char* argv[])
     int display = 0;
     //	if (SDL_GetNumVideoDisplays() > 1) {
     //		cout << "Choose display for video output.\n\n 0 = default desktop,\n 1 = secondary screen,\n etc." <<
-    //endl;
+    // endl;
     //		cin >> display;
     //	}
 
@@ -198,8 +200,8 @@ int main(int argc, char* argv[])
 
             // Reset the newImage flag
             newImage = false;
-            //			std::cout << "t_cpy=" << std::chrono::duration_cast<std::chrono::microseconds>(m_end_time -
-            //m_start_time).count() << "\n";
+            //			std::cout << "t_cpy=" <<
+            // std::chrono::duration_cast<std::chrono::microseconds>(m_end_time - m_start_time).count() << "\n";
         }
     }
 

@@ -1,0 +1,51 @@
+default_stages: [pre-commit]
+
+ci:
+  autoupdate_commit_msg: "chore(deps): pre-commit.ci autoupdate"
+  autoupdate_schedule: "monthly"
+  autofix_commit_msg: "chore: pre-commit.ci fixes"
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-yaml
+        exclude: ".clang-format"
+      - id: debug-statements
+      - id: destroyed-symlinks
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v22.1.2
+    hooks:
+      - id: clang-format
+  - repo: https://github.com/cheshirekow/cmake-format-precommit
+    rev: v0.6.13
+    hooks:
+      - id: cmake-format
+        additional_dependencies: ["cmakelang"]
+      - id: cmake-lint
+        additional_dependencies: ["cmakelang"]
+        exclude: "cmake/.*"
+  - repo: https://github.com/hukkin/mdformat
+    rev: 0.7.22
+    hooks:
+      - id: mdformat
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.39.0
+    hooks:
+      - id: typos
+  - repo: https://github.com/hofbi/dev-tools
+    rev: 1.8.0
+    hooks:
+      - id: check-max-one-sentence-per-line
+      - id: check-snake-case
+      - id: check-no-dashes
+      - id: check-non-existing-and-duplicate-excludes
