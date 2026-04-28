@@ -2,10 +2,9 @@
 #define DECODER_H_
 
 // System includes
-#include <stdio.h>
-#include <stdlib.h>
-
 #include <chrono>
+#include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -24,23 +23,23 @@ extern "C" {
 extern unsigned int listlength;
 #endif
 
-extern const char* video_url;
-extern const int video_port;
-extern const char* ptu_url;
-extern const int to_ptu_port;
-extern const int from_ptu_port;
+extern const char* videoUrl;
+extern const int videoPort;
+extern const char* ptuUrl;
+extern const int toPtuPort;
+extern const int fromPtuPort;
 
-extern uint8_t** argb_src;
+extern uint8_t** argbSrc;
 extern bool newImage;
 extern bool readyToQuit;
 extern int height, width;
 extern const int targetWidth, targetHeight, stereoheight;
 extern char* messageFromPTU;
 
-void Decoder(const char* video_address,
-             uint8_t** argb_raw,
+void Decoder(const char* videoAddress,
+             uint8_t** argbRaw,
              bool* newImg);  // This is the decoder thread running in parallel to the main thread
 
-int decode(AVCodecContext* avctx, AVFrame* frame, int* got_frame, AVPacket* pkt);
+int decode(AVCodecContext* avctx, AVFrame* frame, int* gotFrame, AVPacket* pkt);
 
 #endif /* DECODER_H_ */

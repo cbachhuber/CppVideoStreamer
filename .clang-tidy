@@ -1,0 +1,49 @@
+FormatStyle: file
+
+Checks: '
+-*,
+bugprone-*,
+cppcoreguidelines-*,
+google-*,
+llvm-*,
+misc-*,
+modernize-*,
+readability-*,
+-llvmlibc-*,
+-misc-include-cleaner,
+-modernize-use-trailing-return-type,
+-cppcoreguidelines-no-malloc,
+-cppcoreguidelines-owning-memory,
+-cppcoreguidelines-pro-bounds-pointer-arithmetic,
+-cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+-cppcoreguidelines-pro-type-vararg,
+-cppcoreguidelines-pro-type-reinterpret-cast,
+-cppcoreguidelines-avoid-non-const-global-variables,
+-readability-function-cognitive-complexity,
+-readability-identifier-length,
+-modernize-avoid-c-arrays,
+-cppcoreguidelines-avoid-c-arrays,
+-bugprone-easily-swappable-parameters,
+'
+
+WarningsAsErrors: '*'
+
+CheckOptions:
+  - key:             readability-identifier-naming.NamespaceCase
+    value:           lower_case
+  - key:             readability-identifier-naming.ClassCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.StructCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.UnionCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.EnumCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.FunctionCase
+    value:           camelBack
+  - key:             readability-identifier-naming.MethodCase
+    value:           camelBack
+  - key:             readability-identifier-naming.VariableCase
+    value:           camelBack
+  - key:             readability-identifier-naming.ParameterCase
+    value:           camelBack

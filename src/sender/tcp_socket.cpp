@@ -1,9 +1,8 @@
 #include "tcp_socket.hpp"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
 
 #include <arpa/inet.h>
@@ -12,10 +11,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-TcpSocket::TcpSocket(int port)
-{
-    portID = port;
-}
+TcpSocket::TcpSocket(int port) : portID(port), sockID(0) {}
 
 TcpSocket::~TcpSocket()
 {
@@ -23,49 +19,52 @@ TcpSocket::~TcpSocket()
     std::cout << "Socket closed.\n";
 }
 
-int TcpSocket::listenForLocalConnection()
+bool TcpSocket::listenForLocalConnection()
 {
 
-    int tempsockID = 0;
-    struct sockaddr_in remaddr, cli_addr;
-    socklen_t clilen;
+    int tempSockId = 0;
+    struct sockaddr_in remaddr{};
+    struct sockaddr_in cliAddr{};
+    socklen_t clilen = 0;
 
-    if ((tempsockID = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    tempSockId = socket(AF_INET, SOCK_STREAM, 0);
+    if (tempSockId < 0)
     {
         std::cout << "Could not create socket!\n";  // SOCK_STREAM invokes TCP, SOCK_DGRAM would invoke UDP
-        return 0;
+        return false;
     }
 
-    memset((char*)&remaddr, 0, sizeof(remaddr));
+    memset(reinterpret_cast<char*>(&remaddr), 0, sizeof(remaddr));
     remaddr.sin_family = AF_INET;
     remaddr.sin_addr.s_addr = INADDR_ANY;  // For TCP, we are listening on our own socket
     remaddr.sin_port = htons(portID);
 
     // For TCP
-    if (bind(tempsockID, (struct sockaddr*)&remaddr, sizeof(remaddr)) < 0)
+    if (bind(tempSockId, reinterpret_cast<struct sockaddr*>(&remaddr), sizeof(remaddr)) < 0)
     {
         std::cout << "Error on socket binding!\n";
-        return 0;
+        return false;
     }
 
-    listen(tempsockID, 5);
-    clilen = sizeof(cli_addr);
+    const auto maximumQueueLength = 5;
+    listen(tempSockId, maximumQueueLength);
+    clilen = sizeof(cliAddr);
     std::cout << "Waiting for TCP connection...\n";
-    sockID = accept(tempsockID, (struct sockaddr*)&cli_addr, &clilen);
+    sockID = accept(tempSockId, reinterpret_cast<struct sockaddr*>(&cliAddr), &clilen);
     if (sockID < 0)
     {
         std::cout << "Error on accepting TCP connection!\n";
-        return 0;
+        return false;
     }
 
     // Temporary socket not needed anymore, closing
-    close(tempsockID);
+    close(tempSockId);
     std::cout << "Established TCP connection!\n";
 
-    return 1;
+    return true;
 }
 
-int TcpSocket::send(unsigned char* addr, int len)
+int TcpSocket::send(unsigned char* addr, int len) const
 {
-    return write(sockID, addr, len);
+    return static_cast<int>(write(sockID, addr, len));
 }

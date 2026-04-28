@@ -1,8 +1,7 @@
-
 #ifndef ENCODER_HPP_
 #define ENCODER_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -16,20 +15,24 @@ extern "C" {
 class Encoder
 {
   private:
-    int in_xres, in_yres, out_xres, out_yres;
-    int framecounter;
-    int nheader;
-    x264_t* enc;
-    x264_param_t prms;
-    x264_picture_t pic_in, pic_out;
+    int inXres = 0;
+    int inYres = 0;
+    int outXres = 0;
+    int outYres = 0;
+    int framecounter = 0;
+    int nheader = 0;
+    x264_t* enc = nullptr;
+    x264_param_t prms{};
+    x264_picture_t pic_in{};
+    x264_picture_t pic_out{};
 
-    struct SwsContext* sws;
-    AVFrame pic_raw; /* used for our "raw" input container */
-    AVPixelFormat cam_pixel_fmt = AV_PIX_FMT_BGR24;
+    struct SwsContext* sws = nullptr;
+    AVFrame picRaw{};
+    AVPixelFormat camPixelFmt = AV_PIX_FMT_BGR24;
 
   public:
-    x264_nal_t* nals;
-    int num_nals;
+    x264_nal_t* nals = nullptr;
+    int numNals = 0;
     virtual ~Encoder();
     Encoder() {};
     Encoder(int, int, int, int, float);

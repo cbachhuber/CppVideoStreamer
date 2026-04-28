@@ -1,3 +1,7 @@
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <iomanip>
 
 #include <SDL2/SDL.h>
@@ -6,82 +10,90 @@
 
 #include "decoder.h"
 
-const char* video_url = "tcp://127.0.0.1:5001";
-// const char * video_url = "tcp://10.152.4.207:5000";
-// const char * video_url = "tcp://10.152.4.195:5000";
-int port = 5002;
-const char* target_ip = "127.0.0.1";
+const char* videoUrl = "tcp://127.0.0.1:5001";
+// const char * videoUrl = "tcp://10.152.4.207:5000";
+// const char * videoUrl = "tcp://10.152.4.195:5000";
+const int port = 5002;
+const char* targetIp = "127.0.0.1";
 bool video = true;
 bool fullscreen = false;
 int vsync = 1;
 const int targetWidth = 1280, targetHeight = 720;
-int height = 720, width = 1280;  // will be overwritten by the video dimensions in the decoder; definition here
-                                 // necessary if no video is used
+int height = targetHeight, width = targetWidth;  // will be overwritten by the video dimensions in the decoder;
+                                                 // definition here necessary if no video is used
 
-bool readyToQuit = false;                                      // Quits all threads
-uint8_t** argb_src = (uint8_t**)malloc(sizeof(uint8_t*) * 4);  // Pointer to the decoded image
+bool readyToQuit = false;                                                  // Quits all threads
+uint8_t** argbSrc = static_cast<uint8_t**>(malloc(sizeof(uint8_t*) * 4));  // Pointer to the decoded image
 bool newImage =
     false;  // Set to true by the decoder when it decodes a frame. Set to false after oculus as copied a decoded frame
 #ifdef ARTIFICIAL_DELAY
 unsigned int listlength = 0;
 #endif
-using namespace std;
 
 int main(int argc, char* argv[])
 {
 
     if (argc == 2)
     {
-        video_url = argv[1];
+        videoUrl = argv[1];
     }
     else
     {
-        cout << "Decoding video from default url:" << video_url << ". For other sources, use e.g. '" << argv[0]
-             << " tcp://10.152.4.207:5000'\n";
+        std::cout << "Decoding video from default url:" << videoUrl << ". For other sources, use e.g. '" << argv[0]
+                  << " tcp://10.152.4.207:5000'\n";
     }
 
     // SDL Inits
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
-        cout << "Failed to initialize SDL! SDL Error :" << SDL_GetError() << endl;
+    {
+        std::cout << "Failed to initialize SDL! SDL Error :" << SDL_GetError() << std::endl;
+    }
 
-    int display = 0;
+    const int display = 0;
     //	if (SDL_GetNumVideoDisplays() > 1) {
     //		cout << "Choose display for video output.\n\n 0 = default desktop,\n 1 = secondary screen,\n etc." <<
     // endl;
     //		cin >> display;
     //	}
 
-    SDL_Event* ev = new SDL_Event();
+    auto* event = new SDL_Event();
 
-    uint8_t* pixel_data = (uint8_t*)malloc(targetWidth * targetHeight * 4 * sizeof(uint8_t));
-    uint8_t** pixels;
-    int* argb_stride;
-    pixels = (uint8_t**)malloc(sizeof(uint8_t*) * 4);
-    pixels[0] = pixel_data;
-    pixels[1] = pixel_data + targetWidth * targetHeight;
-    pixels[2] = pixel_data + targetWidth * targetHeight * 2;
-    pixels[3] = pixel_data + targetWidth * targetHeight * 3;
-    argb_stride = (int*)malloc(sizeof(int) * 1);
-    argb_stride[0] = 4 * targetWidth;
-    int test[1];
+    auto* pixelData =
+        static_cast<uint8_t*>(malloc(static_cast<size_t>(targetWidth) * targetHeight * 4 * sizeof(uint8_t)));
+    uint8_t** pixels = nullptr;
+    int* argbStride = nullptr;
+    pixels = static_cast<uint8_t**>(malloc(sizeof(uint8_t*) * 4));
+    pixels[0] = pixelData;
+    pixels[1] = pixelData + static_cast<ptrdiff_t>(targetWidth) * targetHeight;
+    pixels[2] = pixelData + static_cast<ptrdiff_t>(targetWidth) * targetHeight * 2;
+    pixels[3] = pixelData + static_cast<ptrdiff_t>(targetWidth) * targetHeight * 3;
+    argbStride = static_cast<int*>(malloc(sizeof(int) * 1));
+    argbStride[0] = 4 * targetWidth;
+    std::array<int, 1> test = {};
     test[0] = targetWidth * 4;
 
-    thread dec;
+    std::thread dec;
     if (video)
-        dec = thread(Decoder, video_url, argb_src, &newImage);
+    {
+        dec = std::thread(Decoder, videoUrl, argbSrc, &newImage);
+    }
 
     //------------------ UDP port setup ---------------
-    struct sockaddr_in remaddr;
-    int fd, slen = sizeof(remaddr);
+    struct sockaddr_in remaddr{};
+    int sockFd = 0;
+    const int slen = sizeof(remaddr);
 
     //-------------------------- UDP Port setup -----------------------
-    if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
-        cout << "Could not create socket!" << endl;
+    sockFd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sockFd == -1)
+    {
+        std::cout << "Could not create socket!" << std::endl;
+    }
 
-    memset((char*)&remaddr, 0, sizeof(remaddr));
+    memset(reinterpret_cast<char*>(&remaddr), 0, sizeof(remaddr));
     remaddr.sin_family = AF_INET;
     remaddr.sin_port = htons(port);
-    if (inet_aton(target_ip, &remaddr.sin_addr) == 0)
+    if (inet_aton(targetIp, &remaddr.sin_addr) == 0)
     {
         fprintf(stderr, "inet_aton() failed\n");
         exit(1);
@@ -93,9 +105,10 @@ int main(int argc, char* argv[])
         //		cout << "Waiting for first decoded image..." << endl;
         while (!newImage)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+            const auto sleepDurationMs = 20;
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleepDurationMs));
         }
-        cout << "Got first image, now displaying" << endl;
+        std::cout << "Got first image, now displaying" << std::endl;
     }
 
     SDL_Window* win = SDL_CreateWindow("Videoplayer",
@@ -104,17 +117,23 @@ int main(int argc, char* argv[])
                                        targetWidth,
                                        targetHeight,
                                        SDL_WINDOW_OPENGL);
-    if (!win)
-        cout << "Failed to create Window! SDL Error :" << SDL_GetError() << endl;
+    if (win == nullptr)
+    {
+        std::cout << "Failed to create Window! SDL Error :" << SDL_GetError() << std::endl;
+    }
 
     SDL_Renderer* ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
-    if (!ren)
-        cout << "Failed to create Renderer! SDL Error :" << SDL_GetError() << endl;
+    if (ren == nullptr)
+    {
+        std::cout << "Failed to create Renderer! SDL Error :" << SDL_GetError() << std::endl;
+    }
 
     SDL_Texture* tex =
         SDL_CreateTexture(ren, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, targetWidth, targetHeight);
-    if (!tex)
-        cout << "Failed to create Texture! SDL Error :" << SDL_GetError() << endl;
+    if (tex == nullptr)
+    {
+        std::cout << "Failed to create Texture! SDL Error :" << SDL_GetError() << std::endl;
+    }
 
     if (fullscreen)
     {
@@ -128,16 +147,18 @@ int main(int argc, char* argv[])
     while (!readyToQuit)
     {
         // Polling for user signal to end
-        while (SDL_PollEvent(ev))
+        while (static_cast<bool>(SDL_PollEvent(event)))
         {
-            if (ev->type == SDL_KEYDOWN)
+            if (event->type == SDL_KEYDOWN)
             {
-                if ((ev->key.keysym.sym == SDLK_q) || (ev->key.keysym.sym == SDLK_RETURN) ||
-                    (ev->key.keysym.sym == SDLK_SPACE) || (ev->key.keysym.sym == SDLK_ESCAPE))
+                if ((event->key.keysym.sym == SDLK_q) || (event->key.keysym.sym == SDLK_RETURN) ||
+                    (event->key.keysym.sym == SDLK_SPACE) || (event->key.keysym.sym == SDLK_ESCAPE))
+                {
                     readyToQuit = true;
+                }
 
-                const char* msg;
-                switch (ev->key.keysym.sym)
+                const char* msg = nullptr;
+                switch (event->key.keysym.sym)
                 {
                     case SDLK_m:
                         msg = "m";
@@ -159,7 +180,9 @@ int main(int argc, char* argv[])
                         break;  // Decrease box size
                     case SDLK_o:
                         if (listlength > 0)
-                            listlength = max((unsigned int)0, listlength - 1);
+                        {
+                            listlength = std::max(0U, listlength - 1);
+                        }
                         std::cout << "\n" << listlength << "\n";
                         msg = "o";
                         break;  // Decrease delay
@@ -171,13 +194,13 @@ int main(int argc, char* argv[])
                     default:
                         break;
                 }
-                sendto(fd, msg, sizeof(char), 0, (struct sockaddr*)&remaddr, slen);
+                sendto(sockFd, msg, sizeof(char), 0, reinterpret_cast<struct sockaddr*>(&remaddr), slen);
             }
             else
             {
-                if ((ev->type == SDL_MOUSEBUTTONDOWN))
+                if ((event->type == SDL_MOUSEBUTTONDOWN))
                 {  // Shoot!
-                    sendto(fd, "t", sizeof(char), 0, (struct sockaddr*)&remaddr, slen);
+                    sendto(sockFd, "t", sizeof(char), 0, reinterpret_cast<struct sockaddr*>(&remaddr), slen);
                 }
             }
         }
@@ -185,17 +208,19 @@ int main(int argc, char* argv[])
         // Updating image if new one has been decoded
         if (newImage)
         {
-            SDL_LockTexture(tex, NULL, reinterpret_cast<void**>(pixels), test);
+            SDL_LockTexture(tex, nullptr, reinterpret_cast<void**>(pixels), test.data());
 
             // Copy decoded image into retrieved pointer from locking
             //			m_start_time = std::chrono::high_resolution_clock::now();
             if (video)
-                memcpy(*pixels, *argb_src, targetWidth * targetHeight * 4 * sizeof(uint8_t));
+            {
+                memcpy(*pixels, *argbSrc, static_cast<size_t>(targetWidth) * targetHeight * 4 * sizeof(uint8_t));
+            }
             //			m_end_time = std::chrono::high_resolution_clock::now();
 
             SDL_UnlockTexture(tex);
             SDL_RenderClear(ren);
-            SDL_RenderCopy(ren, tex, NULL, NULL);
+            SDL_RenderCopy(ren, tex, nullptr, nullptr);
             SDL_RenderPresent(ren);
 
             // Reset the newImage flag
@@ -208,7 +233,9 @@ int main(int argc, char* argv[])
     readyToQuit = true;
 
     if (video)
+    {
         dec.join();
+    }
 
     // Shutting down SDL
     SDL_DestroyTexture(tex);
@@ -216,7 +243,7 @@ int main(int argc, char* argv[])
     SDL_DestroyWindow(win);
     SDL_Quit();
 
-    cout << "Quit video player" << endl;
+    std::cout << "Quit video player" << std::endl;
 
     return 0;
 }
