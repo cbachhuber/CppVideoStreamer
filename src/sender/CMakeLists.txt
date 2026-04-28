@@ -22,14 +22,15 @@ set(LIBS
     pthread
     va # libs required for ffmpeg
 )
-add_executable(usbCamStreamer VideoStreamerTCP.cpp usbCameraFrameGrabber.cpp
-                              encoder.cpp tcpSocket.cpp)
+add_executable(
+  usbCamStreamer video_streamer_tcp.cpp usb_camera_frame_grabber.cpp
+                 encoder.cpp tcp_socket.cpp)
 target_link_libraries(usbCamStreamer PRIVATE ${LIBS})
 
 if(BUILD_XIMEA)
   set(LIBS ${LIBS} m3api) # Ximea API
   add_executable(
-    ximeaStreamer VideoStreamerTCP.cpp xiApiPlusOcv.cpp
-                  ximeaCameraFrameGrabber.cpp encoder.cpp tcpSocket.cpp)
+    ximeaStreamer video_streamer_tcp.cpp xi_api_plus_ocv.cpp
+                  ximea_camera_frame_grabber.cpp encoder.cpp tcp_socket.cpp)
   target_link_libraries(ximeaStreamer ${LIBS})
 endif(BUILD_XIMEA)

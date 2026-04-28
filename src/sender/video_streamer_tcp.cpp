@@ -1,7 +1,7 @@
 #ifdef BUILD_XIMEA
-#include "ximeaCameraFrameGrabber.hpp"
+#include "ximea_camera_frame_grabber.hpp"
 #else
-#include "usbCameraFrameGrabber.hpp"
+#include "usb_camera_frame_grabber.hpp"
 #endif
 
 #include <stdio.h>
@@ -17,7 +17,7 @@
 #include <unistd.h>
 
 #include "encoder.hpp"
-#include "tcpSocket.hpp"
+#include "tcp_socket.hpp"
 
 // Parses the command line arguments and sets up the camera and encoder objects
 // Returns 1 on success, 0 on failure

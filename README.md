@@ -23,7 +23,8 @@ sudo apt install -y build-essential cmake ffmpeg libx264-dev x264 libopencv-dev 
 For compiling the Ximea sample (disabled by default), the following additional setup steps need to be performed:
 
 - Install the [Camera driver and SDK](https://www.ximea.com/support/wiki/apis/XIMEA_Linux_Software_Package).
-  Installation is described on the linked webpage. During installation, do not use the -pcie argument.
+  Installation is described on the linked webpage.
+  During installation, do not use the -pcie argument.
 - After installation, increase the USB buffer size in Linux (add 'echo 0 > /sys/module/usbcore/parameters/usbfs_memory_mb' to /etc/rc.local) and [allow the application to run in realtime](https://www.ximea.com/support/wiki/apis/Linux_USB30_Support#Allow-to-Run-Application-Realtime).
 
 ## Building

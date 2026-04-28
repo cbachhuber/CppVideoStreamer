@@ -16,7 +16,7 @@ repos:
       - id: check-shebang-scripts-are-executable
       - id: check-symlinks
       - id: check-yaml
-        exclude: (?x)( .gitlab-ci.yml | .clang-format )
+        exclude: ".clang-format"
       - id: debug-statements
       - id: destroyed-symlinks
       - id: detect-private-key
@@ -42,10 +42,10 @@ repos:
     rev: v1.39.0
     hooks:
       - id: typos
-  # - repo: https://github.com/hofbi/dev-tools
-  #   rev: 1.8.0
-  #   hooks:
-  #     - id: check-max-one-sentence-per-line
-  #     - id: check-snake-case
-  #     - id: check-no-dashes
-  #     - id: check-non-existing-and-duplicate-excludes
+  - repo: https://github.com/hofbi/dev-tools
+    rev: 1.8.0
+    hooks:
+      - id: check-max-one-sentence-per-line
+      - id: check-snake-case
+      - id: check-no-dashes
+      - id: check-non-existing-and-duplicate-excludes

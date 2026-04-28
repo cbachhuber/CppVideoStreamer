@@ -1,4 +1,4 @@
-#include "xiApiPlusOcv.hpp"
+#include "xi_api_plus_ocv.hpp"
 
 //-------------------------------------------------------------------------------------------------------------------
 // xiAPIplus parameters implementation file - created from gen_xiAPIplus_cpp_file.xslt

@@ -1,4 +1,4 @@
-#include "usbCameraFrameGrabber.hpp"
+#include "usb_camera_frame_grabber.hpp"
 
 #include <stdio.h>
 

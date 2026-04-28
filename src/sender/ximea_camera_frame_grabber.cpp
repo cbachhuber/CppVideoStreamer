@@ -1,4 +1,4 @@
-#include "ximeaCameraFrameGrabber.hpp"
+#include "ximea_camera_frame_grabber.hpp"
 
 void cameraFrameGrabber(CameraParameters* params, unsigned char* img, bool* imgReady, bool* prog_end)
 {

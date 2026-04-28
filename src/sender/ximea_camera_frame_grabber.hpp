@@ -1,4 +1,4 @@
-#include "xiApiPlusOcv.hpp"
+#include "xi_api_plus_ocv.hpp"
 
 struct CameraParameters
 {
