@@ -201,7 +201,7 @@ int main(int argc, char* argv[])
             // Reset the newImage flag
             newImage = false;
             //			std::cout << "t_cpy=" <<
-            //std::chrono::duration_cast<std::chrono::microseconds>(m_end_time - m_start_time).count() << "\n";
+            // std::chrono::duration_cast<std::chrono::microseconds>(m_end_time - m_start_time).count() << "\n";
         }
     }
 

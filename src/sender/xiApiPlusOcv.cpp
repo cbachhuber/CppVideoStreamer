@@ -11373,7 +11373,7 @@ xiAPIplus_Image* xiAPIplus_Camera::GetNextImage(xiAPIplus_Image* app_image)
     res = xiGetImage(camera_handle, image_timeout_ms, image->GetXI_IMG());
     //	end_time = std::chrono::high_resolution_clock::now();
     //	std::cout << "tcp = " << std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count() <<
-    //std::endl;
+    // std::endl;
     CheckResult(res, "GetNextImage");
     return image;
 }
