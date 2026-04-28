@@ -4561,7 +4561,7 @@ void xiAPIplus_Camera::SetGammaChromaticity(float GammaChromaticity)
     CheckResult(res, "SetGammaChromaticity");
 }
 
-// Sharpness Strenght (XI_PRM_SHARPNESS)
+// Sharpness Strength (XI_PRM_SHARPNESS)
 float xiAPIplus_Camera::GetSharpness()
 {
     float val = 0;
@@ -10947,7 +10947,7 @@ xiapi_errorcode_t xiAPIplus_errorcodes_list[] = {
     XI_FREE_CHANNEL,
     "Freeing channel error",
     XI_FREE_BANDWIDTH,
-    "Freeing bandwith error",
+    "Freeing bandwidth error",
     XI_READBLK,
     "Read block error",
     XI_WRITEBLK,
@@ -11022,9 +11022,9 @@ xiapi_errorcode_t xiAPIplus_errorcodes_list[] = {
     "To get error code please call GetLastError function.",
     XI_CANT_PROCESS,
     "Data cannot be processed",
-    XI_ACQUISITION_STOPED,
+    XI_ACQUISITION_STOPPED,
     "Acquisition is stopped. It needs to be started to perform operation.",
-    XI_ACQUISITION_STOPED_WERR,
+    XI_ACQUISITION_STOPPED_WERR,
     "Acquisition has been stopped with an error.",
     XI_INVALID_INPUT_ICC_PROFILE,
     "Input ICC profile missing or corrupted",
@@ -11042,7 +11042,7 @@ xiapi_errorcode_t xiAPIplus_errorcodes_list[] = {
     "Installed driver is not compatible with current software",
     XI_TM_INVALID_RESOURCE,
     "TM file was not loaded successfully from resources",
-    XI_DEVICE_HAS_BEEN_RESETED,
+    XI_DEVICE_HAS_BEEN_RESET,
     "Device has been reset, abnormal initial state",
     XI_NO_DEVICES_FOUND,
     "No Devices Found",
@@ -11140,7 +11140,7 @@ void xiAPIplus::EnableCamEnumGoldenEnabled()
 
 #if 0
 // -----------------------------------------------
-// general parametes interface
+// general parameters interface
 // working with set of parameters
 // -----------------------------------------------
 
@@ -11358,7 +11358,7 @@ bool xiAPIplus_Camera::IsAcquisitionActive()
 // get next image
 // receiving next image from xiAPI
 // if (app_image is defined) storing result to app_image
-// else storing result to last_image, also returing pointer to it
+// else storing result to last_image, also returning pointer to it
 
 xiAPIplus_Image* xiAPIplus_Camera::GetNextImage(xiAPIplus_Image* app_image)
 {
@@ -11468,7 +11468,7 @@ xiAPIplus_Image::~xiAPIplus_Image()
 {
     if (IsCopy())
     {
-        // desctruct copy
+        // destruct copy
         XI_IMG* image = GetXI_IMG();
         if (image->bp && GetPixelsArraySize())
         {

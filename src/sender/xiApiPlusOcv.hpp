@@ -119,7 +119,7 @@ typedef enum
         10,  // Enables/Disables shifted(left/up) image data dithering on HOST side. Default = 0(off).
     XI_EXT_FEATURE_SEL_DITHERING_DEVICE =
         11,  // Enables/Disables shifted(left/up) image data dithering on DEVICE side. Default = 0(off).
-    XI_EXT_FEATURE_SEL_FAN_THR_TEMP = 12,  // Sets camera fan/back side threshold temperature. Default = 35.
+    XI_EXT_FEATURE_SEL_FAN_THE_TEMP = 12,  // Sets camera fan/back side threshold temperature. Default = 35.
 
 } XI_EXT_FEATURE_SELECTOR;
 
@@ -246,7 +246,7 @@ class xiAPIplus_Exception
 };
 
 // -----------------------------------------------
-// general parametes interface
+// general parameters interface
 // working with set of parameters
 // -----------------------------------------------
 
@@ -498,7 +498,7 @@ class xiAPIplus_Camera
 
     // Sets/Gets sensor defects list in special text format (XI_PRM_SENS_DEFECTS_CORR_LIST_CONTENT)
 
-    void GetSensDefectsCorrListContent(char* buffer, int buffer_lenght);
+    void GetSensDefectsCorrListContent(char* buffer, int buffer_length);
 
     void SetSensDefectsCorrListContent(char* SensDefectsCorrListContent);
 
@@ -619,13 +619,13 @@ class xiAPIplus_Camera
 
     // Set name of file to be applied for FFC processor. (XI_PRM_FFC_FLAT_FIELD_FILE_NAME)
 
-    void GetFFCFlatFieldFileName(char* buffer, int buffer_lenght);
+    void GetFFCFlatFieldFileName(char* buffer, int buffer_length);
 
     void SetFFCFlatFieldFileName(char* FFCFlatFieldFileName);
 
     // Set name of file to be applied for FFC processor. (XI_PRM_FFC_DARK_FIELD_FILE_NAME)
 
-    void GetFFCDarkFieldFileName(char* buffer, int buffer_lenght);
+    void GetFFCDarkFieldFileName(char* buffer, int buffer_length);
 
     void SetFFCDarkFieldFileName(char* FFCDarkFieldFileName);
 
@@ -961,13 +961,13 @@ class xiAPIplus_Camera
 
     // Filename for input cms profile (e.g. input.icc) (XI_PRM_INPUT_CMS_PROFILE)
 
-    void GetColorManagementInputProfile(char* buffer, int buffer_lenght);
+    void GetColorManagementInputProfile(char* buffer, int buffer_length);
 
     void SetColorManagementInputProfile(char* ColorManagementInputProfile);
 
     // Filename for output cms profile (e.g. input.icc) (XI_PRM_OUTPUT_CMS_PROFILE)
 
-    void GetColorManagementOutputProfile(char* buffer, int buffer_lenght);
+    void GetColorManagementOutputProfile(char* buffer, int buffer_length);
 
     void SetColorManagementOutputProfile(char* ColorManagementOutputProfile);
 
@@ -999,7 +999,7 @@ class xiAPIplus_Camera
 
     void SetGammaChromaticity(float GammaChromaticity);
 
-    // Sharpness Strenght (XI_PRM_SHARPNESS)
+    // Sharpness Strength (XI_PRM_SHARPNESS)
 
     float GetSharpness();
     float GetSharpness_Maximum();
@@ -1348,7 +1348,7 @@ class xiAPIplus_Camera
 
     // Write/Read data sequences to/from lens (XI_PRM_LENS_COMM_DATA)
 
-    void GetLensCommData(char* buffer, int buffer_lenght);
+    void GetLensCommData(char* buffer, int buffer_length);
 
     //-------------------------------------------------------------------------------------------------------------------
     // ---- Parameter Group: Device info parameters
@@ -1356,11 +1356,11 @@ class xiAPIplus_Camera
 
     // Return device name (XI_PRM_DEVICE_NAME)
 
-    void GetCameraName(char* buffer, int buffer_lenght);
+    void GetCameraName(char* buffer, int buffer_length);
 
     // Return device type (XI_PRM_DEVICE_TYPE)
 
-    void GetCameraType(char* buffer, int buffer_lenght);
+    void GetCameraType(char* buffer, int buffer_length);
 
     // Return device model id (XI_PRM_DEVICE_MODEL_ID)
 
@@ -1376,31 +1376,31 @@ class xiAPIplus_Camera
     int GetSensorId_Increment();
     // Return device serial number (XI_PRM_DEVICE_SN)
 
-    void GetSerialNumber(char* buffer, int buffer_lenght);
+    void GetSerialNumber(char* buffer, int buffer_length);
 
     // Return sensor serial number (XI_PRM_DEVICE_SENS_SN)
 
-    void GetSensorSerialNumber(char* buffer, int buffer_lenght);
+    void GetSensorSerialNumber(char* buffer, int buffer_length);
 
     // Return unique device ID (XI_PRM_DEVICE_ID)
 
-    void GetDeviceId(char* buffer, int buffer_lenght);
+    void GetDeviceId(char* buffer, int buffer_length);
 
     // Return device system instance path. (XI_PRM_DEVICE_INSTANCE_PATH)
 
-    void GetDevicePath(char* buffer, int buffer_lenght);
+    void GetDevicePath(char* buffer, int buffer_length);
 
     // Represents the location of the device in the device tree. (XI_PRM_DEVICE_LOCATION_PATH)
 
-    void GetDeviceLocPath(char* buffer, int buffer_lenght);
+    void GetDeviceLocPath(char* buffer, int buffer_length);
 
     // Return custom ID of camera. (XI_PRM_DEVICE_USER_ID)
 
-    void GetUserId(char* buffer, int buffer_lenght);
+    void GetUserId(char* buffer, int buffer_length);
 
     // Return device capability description XML. (XI_PRM_DEVICE_MANIFEST)
 
-    void GetDeviceManifest(char* buffer, int buffer_lenght);
+    void GetDeviceManifest(char* buffer, int buffer_length);
 
     // User image data at image header to track parameters synchronization. (XI_PRM_IMAGE_USER_DATA)
 
@@ -1743,35 +1743,35 @@ class xiAPIplus_Camera
 
     // Returns version of API. (XI_PRM_API_VERSION)
 
-    void GetVersionAPI(char* buffer, int buffer_lenght);
+    void GetVersionAPI(char* buffer, int buffer_length);
 
     // Returns version of current device driver. (XI_PRM_DRV_VERSION)
 
-    void GetVersionDriver(char* buffer, int buffer_lenght);
+    void GetVersionDriver(char* buffer, int buffer_length);
 
     // Returns version of MCU1 firmware. (XI_PRM_MCU1_VERSION)
 
-    void GetVersionMCU1(char* buffer, int buffer_lenght);
+    void GetVersionMCU1(char* buffer, int buffer_length);
 
     // Returns version of MCU2 firmware. (XI_PRM_MCU2_VERSION)
 
-    void GetVersionMCU2(char* buffer, int buffer_lenght);
+    void GetVersionMCU2(char* buffer, int buffer_length);
 
     // Returns version of MCU3 firmware. (XI_PRM_MCU3_VERSION)
 
-    void GetVersionMCU3(char* buffer, int buffer_lenght);
+    void GetVersionMCU3(char* buffer, int buffer_length);
 
     // Returns version of FPGA1 firmware. (XI_PRM_FPGA1_VERSION)
 
-    void GetVersionFPGA1(char* buffer, int buffer_lenght);
+    void GetVersionFPGA1(char* buffer, int buffer_length);
 
     // Returns version of XML manifest. (XI_PRM_XMLMAN_VERSION)
 
-    void GetVersionXMLMAN(char* buffer, int buffer_lenght);
+    void GetVersionXMLMAN(char* buffer, int buffer_length);
 
     // Returns hardware revision number. (XI_PRM_HW_REVISION)
 
-    void GetHWRevision(char* buffer, int buffer_lenght);
+    void GetHWRevision(char* buffer, int buffer_length);
 
     //-------------------------------------------------------------------------------------------------------------------
     // ---- Parameter Group: API features
@@ -1834,17 +1834,17 @@ class xiAPIplus_Camera
 
     // Read file from camera flash filesystem. (XI_PRM_READ_FILE_FFS)
 
-    void GetReadFileFFS(char* buffer, int buffer_lenght);
+    void GetReadFileFFS(char* buffer, int buffer_length);
 
     // Write file to camera flash filesystem. (XI_PRM_WRITE_FILE_FFS)
 
-    void GetWriteFileFFS(char* buffer, int buffer_lenght);
+    void GetWriteFileFFS(char* buffer, int buffer_length);
 
     void SetWriteFileFFS(char* WriteFileFFS);
 
     // Set name of file to be written/read from camera FFS. (XI_PRM_FFS_FILE_NAME)
 
-    void GetFFSFileName(char* buffer, int buffer_lenght);
+    void GetFFSFileName(char* buffer, int buffer_length);
 
     void SetFFSFileName(char* FFSFileName);
 
@@ -1887,7 +1887,7 @@ class xiAPIplus_Camera
     // List of current parameters settings context - parameters with values. Used for offline processing.
     // (XI_PRM_API_CONTEXT_LIST)
 
-    void GetApiContextList(char* buffer, int buffer_lenght);
+    void GetApiContextList(char* buffer, int buffer_length);
 
     void SetApiContextList(char* ApiContextList);
 
@@ -1960,7 +1960,7 @@ class xiAPIplus_Camera
     // Callback address of pointer that is called upon long tasks (e.g. XI_PRM_WRITE_FILE_FFS).
     // (XI_PRM_API_PROGRESS_CALLBACK)
 
-    void GetApiProgressCallback(char* buffer, int buffer_lenght);
+    void GetApiProgressCallback(char* buffer, int buffer_length);
 
     void SetApiProgressCallback(char* ApiProgressCallback);
 

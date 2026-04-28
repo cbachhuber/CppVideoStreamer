@@ -38,12 +38,10 @@ repos:
     rev: 0.7.22
     hooks:
       - id: mdformat
-        additional_dependencies:
-          - mdformat-toc
-  # - repo: https://github.com/crate-ci/typos
-  #   rev: v1.39.0
-  #   hooks:
-  #     - id: typos
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.39.0
+    hooks:
+      - id: typos
   # - repo: https://github.com/hofbi/dev-tools
   #   rev: 1.8.0
   #   hooks:
