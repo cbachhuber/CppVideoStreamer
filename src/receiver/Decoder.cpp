@@ -11,12 +11,14 @@
 
 // Serial port includes
 #include <errno.h>  //Error number definitions
+
 #include <iomanip>
+
 #include <fcntl.h>    //File control definitions
 #include <termios.h>  //POSIX terminal control definitions
 #include <unistd.h>
 
-//#define ARDUINO_MSMT
+// #define ARDUINO_MSMT
 #define MSGLENGTH 30
 
 void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
