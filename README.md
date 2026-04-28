@@ -86,4 +86,4 @@ Then, run the program when the streamer is already running, from your build dire
 
 This repository is [licensed under GPL-3.0](./LICENSE).
 We'd prefer to have a more permissive license, however, we're depending on [x264](https://www.videolan.org/developers/x264.html) which itself has a GPL license.
-That [forces us to use GPL as well](https://en.wikipedia.org/wiki/GNU_General_Public_License#:~:text=Only%20if%20GPLed%20parts%20are%20used%20in%20a%20program%20(and%20the%20program%20is%20distributed)%2C%20then%20all%20other%20source%20code%20of%20the%20program%20needs%20to%20be%20made%20available%20under%20the%20same%20license%20terms).
+That [forces us to use GPL as well](<https://en.wikipedia.org/wiki/GNU_General_Public_License#:~:text=Only%20if%20GPLed%20parts%20are%20used%20in%20a%20program%20(and%20the%20program%20is%20distributed)%2C%20then%20all%20other%20source%20code%20of%20the%20program%20needs%20to%20be%20made%20available%20under%20the%20same%20license%20terms>).
