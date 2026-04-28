@@ -24,7 +24,7 @@ For compiling the Ximea sample (disabled by default), the following additional s
 
 - Install the [Camera driver and SDK](https://www.ximea.com/support/wiki/apis/XIMEA_Linux_Software_Package).
   Installation is described on the linked webpage.
-  During installation, do not use the -pcie argument.
+  During installation, do not use the `-pcie` argument since we're only supporting Ximean USB cameras.
 - After installation, increase the USB buffer size in Linux (add 'echo 0 > /sys/module/usbcore/parameters/usbfs_memory_mb' to /etc/rc.local) and [allow the application to run in realtime](https://www.ximea.com/support/wiki/apis/Linux_USB30_Support#Allow-to-Run-Application-Realtime).
 
 ## Building
