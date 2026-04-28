@@ -30,4 +30,4 @@ jobs:
     - name: configure
       run: mkdir -p build && cd build && cmake .. -DENABLE_CLANG_TIDY=ON
     - name: build
-      run: cd build && cmake --build .
+      run: cd build && cmake --build . -j $(nproc)
