@@ -289,7 +289,7 @@ int decode(AVCodecContext* avctx, AVFrame* frame, int* gotFrame, AVPacket* pkt)
 
     *gotFrame = 0;
 
-    if (pkt)
+    if (pkt != nullptr)
     {
         ret = avcodec_send_packet(avctx, pkt);
         // In particular, we don't expect
