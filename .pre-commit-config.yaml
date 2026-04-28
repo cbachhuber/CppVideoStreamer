@@ -15,8 +15,6 @@ repos:
       - id: check-executables-have-shebangs
       - id: check-shebang-scripts-are-executable
       - id: check-symlinks
-      - id: check-yaml
-        exclude: ".clang-format"
       - id: debug-statements
       - id: destroyed-symlinks
       - id: detect-private-key

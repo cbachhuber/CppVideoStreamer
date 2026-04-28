@@ -19,10 +19,10 @@ bool video = true;
 bool fullscreen = false;
 int vsync = 1;
 const int targetWidth = 1280, targetHeight = 720;
-int height = targetHeight, width = targetWidth;  // will be overwritten by the video dimensions in the decoder; definition here
-                                 // necessary if no video is used
+int height = targetHeight, width = targetWidth;  // will be overwritten by the video dimensions in the decoder;
+                                                 // definition here necessary if no video is used
 
-bool readyToQuit = false;                                                                    // Quits all threads
+bool readyToQuit = false;                                                  // Quits all threads
 uint8_t** argbSrc = static_cast<uint8_t**>(malloc(sizeof(uint8_t*) * 4));  // Pointer to the decoded image
 bool newImage =
     false;  // Set to true by the decoder when it decodes a frame. Set to false after oculus as copied a decoded frame
@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     else
     {
         std::cout << "Decoding video from default url:" << videoUrl << ". For other sources, use e.g. '" << argv[0]
-             << " tcp://10.152.4.207:5000'\n";
+                  << " tcp://10.152.4.207:5000'\n";
     }
 
     // SDL Inits
@@ -58,7 +58,8 @@ int main(int argc, char* argv[])
 
     auto* event = new SDL_Event();
 
-    auto* pixelData = static_cast<uint8_t*>(malloc(static_cast<size_t>(targetWidth) * targetHeight * 4 * sizeof(uint8_t)));
+    auto* pixelData =
+        static_cast<uint8_t*>(malloc(static_cast<size_t>(targetWidth) * targetHeight * 4 * sizeof(uint8_t)));
     uint8_t** pixels = nullptr;
     int* argbStride = nullptr;
     pixels = static_cast<uint8_t**>(malloc(sizeof(uint8_t*) * 4));
@@ -78,7 +79,7 @@ int main(int argc, char* argv[])
     }
 
     //------------------ UDP port setup ---------------
-    struct sockaddr_in remaddr {};
+    struct sockaddr_in remaddr{};
     int sockFd = 0;
     const int slen = sizeof(remaddr);
 

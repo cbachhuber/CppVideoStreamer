@@ -2,7 +2,6 @@
 
 #include <cstdio>
 #include <cstring>
-
 #include <iostream>
 
 #include <opencv2/core.hpp>
@@ -25,8 +24,9 @@ void cameraFrameGrabber(CameraParameters* params, unsigned char* img, bool* imgR
     cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
     cap.set(cv::CAP_PROP_FRAME_WIDTH, params->width);
     cap.set(cv::CAP_PROP_FRAME_HEIGHT, params->height);
-    cap.set(cv::CAP_PROP_FPS, params->fps);     // This can control fps. But only up to limit given by cam.
-    const auto autoExposure = 0.25;  // This value gives manual exposure control for many cameras, but might differ for your camera
+    cap.set(cv::CAP_PROP_FPS, params->fps);  // This can control fps. But only up to limit given by cam.
+    const auto autoExposure =
+        0.25;  // This value gives manual exposure control for many cameras, but might differ for your camera
     cap.set(cv::CAP_PROP_AUTO_EXPOSURE, autoExposure);
     // An exposure value of 0.0835 seems to enable the highest frame rate on a Logitech C922.
     // Might differ for your camera. In general, the range for exposure should be [0,1]

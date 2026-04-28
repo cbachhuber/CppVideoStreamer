@@ -2,10 +2,9 @@
 #define DECODER_H_
 
 // System includes
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
-
-#include <chrono>
 #include <iostream>
 #include <sstream>
 #include <string>

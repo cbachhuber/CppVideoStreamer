@@ -5,16 +5,15 @@
 #include <list>
 
 // Socket includes
+#include <iomanip>
+
 #include <arpa/inet.h>
+#include <fcntl.h>  //File control definitions
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <unistd.h>
-
-#include <iomanip>
-
-#include <fcntl.h>    //File control definitions
 #include <termios.h>  //POSIX terminal control definitions
+#include <unistd.h>
 
 // #define ARDUINO_MSMT
 constexpr int kMsgLength = 30;
@@ -160,10 +159,19 @@ void Decoder(const char* videoAddress, uint8_t** argbRaw, bool* /*newImg*/)
     //----------------------------   CSP conversion initialization
     //-------------------------------------
     //---------------------------------------------------------------------------------------------------
-    swsCtxYuv2Bgra = sws_getContext(
-        width, height, AV_PIX_FMT_YUV420P, targetWidth, targetHeight, AV_PIX_FMT_RGBA, SWS_BILINEAR, nullptr, nullptr, nullptr);
+    swsCtxYuv2Bgra = sws_getContext(width,
+                                    height,
+                                    AV_PIX_FMT_YUV420P,
+                                    targetWidth,
+                                    targetHeight,
+                                    AV_PIX_FMT_RGBA,
+                                    SWS_BILINEAR,
+                                    nullptr,
+                                    nullptr,
+                                    nullptr);
 
-    auto* argbData = static_cast<uint8_t*>(malloc(static_cast<size_t>(targetWidth) * targetHeight * 4 * sizeof(uint8_t)));
+    auto* argbData =
+        static_cast<uint8_t*>(malloc(static_cast<size_t>(targetWidth) * targetHeight * 4 * sizeof(uint8_t)));
     argbRaw[0] = argbData;
     argbRaw[1] = argbData + static_cast<ptrdiff_t>(targetWidth) * targetHeight;
     argbRaw[2] = argbData + static_cast<ptrdiff_t>(targetWidth) * targetHeight * 2;
@@ -252,14 +260,13 @@ void Decoder(const char* videoAddress, uint8_t** argbRaw, bool* /*newImg*/)
             constexpr int kPrintInterval = 5;
             if (framecounter % (kFps / kPrintInterval) == 0)
             {
-                std::cout
-                    << "\r"
-                    << "rb=" << pkt->size << "B, "
-                    << "t_dec="
-                    << std::chrono::duration_cast<std::chrono::microseconds>(decodingEnd - decodingStart).count()
-                    << "us, t_cc="
-                    << std::chrono::duration_cast<std::chrono::microseconds>(ccEnd - decodingEnd).count()
-                    << std::flush;
+                std::cout << "\r"
+                          << "rb=" << pkt->size << "B, "
+                          << "t_dec="
+                          << std::chrono::duration_cast<std::chrono::microseconds>(decodingEnd - decodingStart).count()
+                          << "us, t_cc="
+                          << std::chrono::duration_cast<std::chrono::microseconds>(ccEnd - decodingEnd).count()
+                          << std::flush;
             }
 #endif
         }

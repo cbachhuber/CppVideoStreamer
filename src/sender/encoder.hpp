@@ -22,12 +22,12 @@ class Encoder
     int framecounter = 0;
     int nheader = 0;
     x264_t* enc = nullptr;
-    x264_param_t prms {};
-    x264_picture_t pic_in {};
-    x264_picture_t pic_out {};
+    x264_param_t prms{};
+    x264_picture_t pic_in{};
+    x264_picture_t pic_out{};
 
     struct SwsContext* sws = nullptr;
-    AVFrame picRaw {};
+    AVFrame picRaw{};
     AVPixelFormat camPixelFmt = AV_PIX_FMT_BGR24;
 
   public:

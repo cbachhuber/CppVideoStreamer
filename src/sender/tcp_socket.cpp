@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
 #include <iostream>
 
 #include <arpa/inet.h>
@@ -12,10 +11,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-TcpSocket::TcpSocket(int port)
-    : portID(port), sockID(0)
-{
-}
+TcpSocket::TcpSocket(int port) : portID(port), sockID(0) {}
 
 TcpSocket::~TcpSocket()
 {
@@ -27,8 +23,8 @@ bool TcpSocket::listenForLocalConnection()
 {
 
     int tempSockId = 0;
-    struct sockaddr_in remaddr {};
-    struct sockaddr_in cliAddr {};
+    struct sockaddr_in remaddr{};
+    struct sockaddr_in cliAddr{};
     socklen_t clilen = 0;
 
     tempSockId = socket(AF_INET, SOCK_STREAM, 0);

@@ -4,11 +4,10 @@
 #include "usb_camera_frame_grabber.hpp"
 #endif
 
+#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
-#include <chrono>
 #include <iomanip>
 #include <iostream>
 #include <thread>
@@ -26,8 +25,8 @@ bool parseArguments(int argc, char** argv, TcpSocket* sock, CameraParameters* ca
 int main(int argc, char* argv[])
 {
     // Variable initializations
-    bool progEnd = false;  // Shared between threads to signal program shutdown
-    bool imgReady = false;   // Synchronizes cameraFrameGrabber and encoder
+    bool progEnd = false;   // Shared between threads to signal program shutdown
+    bool imgReady = false;  // Synchronizes cameraFrameGrabber and encoder
     int framecounter = 0;
     std::chrono::time_point<std::chrono::high_resolution_clock> encStart;
     std::chrono::time_point<std::chrono::high_resolution_clock> encEnd;
@@ -35,7 +34,7 @@ int main(int argc, char* argv[])
     std::chrono::time_point<std::chrono::high_resolution_clock> overallStart;
 
     // Main objects: camera parameters, encoder and tcp Socket
-    CameraParameters camParams {};
+    CameraParameters camParams{};
     Encoder enc;
     TcpSocket sock;
 
@@ -107,12 +106,13 @@ int main(int argc, char* argv[])
         if ((framecounter % (static_cast<int>(camParams.fps) / updateFrequency)) == 0)
         {
             const auto millisecondsToSeconds = 1000;
-            std::cout << "\rt_enc="
-                      << std::chrono::duration_cast<std::chrono::microseconds>(encEnd - encStart).count()
-                      << "us, fs=" << frameSize << "b, sb=" << sentbytesFrame << "b, fps="
-                      << (static_cast<double>(framecounter) * millisecondsToSeconds) /
-                             static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(timekeeper - overallStart).count())
-                      << "Hz.        " << std::flush;
+            std::cout
+                << "\rt_enc=" << std::chrono::duration_cast<std::chrono::microseconds>(encEnd - encStart).count()
+                << "us, fs=" << frameSize << "b, sb=" << sentbytesFrame << "b, fps="
+                << (static_cast<double>(framecounter) * millisecondsToSeconds) /
+                       static_cast<double>(
+                           std::chrono::duration_cast<std::chrono::milliseconds>(timekeeper - overallStart).count())
+                << "Hz.        " << std::flush;
         }
 
         framecounter++;
@@ -173,7 +173,8 @@ bool parseArguments(int argc, char* argv[], TcpSocket* sock, CameraParameters* c
 
     // Computing remaining values
     const auto microsecondsToSeconds = 1000000;
-    const auto exposureTimeFactor = 1.005;  // Empirically determined factor to get the actual exposure time slightly below the frame time, to avoid dropped frames
+    const auto exposureTimeFactor = 1.005;  // Empirically determined factor to get the actual exposure time slightly
+                                            // below the frame time, to avoid dropped frames
     const auto offsetGridSize = 16;
     camParams->t_exp = static_cast<int>(microsecondsToSeconds / (camParams->fps * exposureTimeFactor));
     camParams->xoff = offsetGridSize * ((camParams->sensor_width - camParams->width) / (offsetGridSize * 2));
