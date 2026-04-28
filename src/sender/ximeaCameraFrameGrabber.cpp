@@ -1,7 +1,7 @@
 #include "ximeaCameraFrameGrabber.hpp"
 
 void cameraFrameGrabber(CameraParameters * params, unsigned char * img, bool *imgReady, bool *prog_end){
-  
+
 	// Camera setup
 	xiAPIplusCameraOcv cam;
 	cam.OpenByUserID(params->eye);
@@ -26,7 +26,7 @@ void cameraFrameGrabber(CameraParameters * params, unsigned char * img, bool *im
 		*prog_end = true;
 		std::cout << "Is the sensor size (camera.sensor_width and camera.sensor_height) in your config file correct?\n\n";
 	}
-	
+
 	std::cout << "Starting Acquisition of camera " << params->eye << std::endl;
 	cam.StartAcquisition();
 
@@ -39,11 +39,11 @@ void cameraFrameGrabber(CameraParameters * params, unsigned char * img, bool *im
 
 		// Copy to allocated memory from main
 		memcpy(img, imgl.data,(params->height)*(params->width)*3);
-		
+
 		// Set imgReady: encoder can now process image
 		*imgReady = true;
 	}
-	
+
 	cam.StopAcquisition();
 	cam.Close();
 }

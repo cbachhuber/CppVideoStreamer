@@ -6,7 +6,7 @@ find_package(SDL2 REQUIRED)
 
 add_library(decoder Decoder.cpp)
 
-target_include_directories(decoder 
+target_include_directories(decoder
     PUBLIC .
 )
 

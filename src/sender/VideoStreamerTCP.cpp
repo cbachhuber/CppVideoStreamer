@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
 	// Parse command line arguments
 	if(!argumentParser(argc, argv, &sock, &cam_params, &enc)) return -1;
-	
+
 	// Allocate memory for raw image
 	unsigned char * img = (unsigned char *) malloc(cam_params.width * cam_params.height * 3);
 
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 		int frame_size =  enc.encode(img, &imgReady);
 		enc_end= std::chrono::high_resolution_clock::now();
 
-		// Send using tcpSocket 
+		// Send using tcpSocket
 		int sentbytes_frame = 0;
 		for(int i=0;i<enc.num_nals;i++){
 
@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
 
 
 int argumentParser(int argc, char * argv[], TcpSocket* sock, CameraParameters* cam_params, Encoder* enc){
-  
+
 	std::stringstream ss;
 	cv::FileStorage conf;
 	std::string temp;
@@ -126,7 +126,7 @@ int argumentParser(int argc, char * argv[], TcpSocket* sock, CameraParameters* c
 		std::cout << msg << std::endl;
 		return 0;
 	}
-	
+
 	// Get values from config file
 	*sock = TcpSocket(conf["port"]);
 	cam_params->eye = (char *) malloc(99);
@@ -150,6 +150,6 @@ int argumentParser(int argc, char * argv[], TcpSocket* sock, CameraParameters* c
 	cam_params->t_exp = (int)(1000000/(cam_params->fps*1.005));
 	cam_params->xoff = 16*((cam_params->sensor_width - cam_params->width)/(16*2));
 	cam_params->yoff = 16*((cam_params->sensor_height - cam_params->height)/(16*2));
-	
+
 	return 1;
 }

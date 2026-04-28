@@ -13,9 +13,9 @@ Encoder::Encoder(int inW, int inH, int outW, int outH, float fps):
 		in_xres(inW),
 		in_yres(inH),
 		out_xres(outW),
-		out_yres(outH) 
+		out_yres(outH)
 	{
-	
+
 	framecounter = 0;
 	x264_param_default_preset(&prms, "ultrafast", "zerolatency,fastdecode");
 	x264_param_apply_profile(&prms, "baseline");
@@ -49,7 +49,7 @@ Encoder::Encoder(int inW, int inH, int outW, int outH, float fps):
 
 // Puts the raw char data of an image into an AV container, color converts and encodes it
 int Encoder::encode(unsigned char * img, bool *imgReady){
-  
+
 	// Put raw image data to AV picture
   	int bytes_filled = av_image_fill_arrays(pic_raw.data,pic_raw.linesize, img, cam_pixel_fmt, in_xres, in_yres,1);
 	if(!bytes_filled) {
@@ -71,8 +71,6 @@ int Encoder::encode(unsigned char * img, bool *imgReady){
 	// Encode
 	pic_in.i_pts = framecounter++;
 	int frame_size = x264_encoder_encode(enc, &nals, &num_nals, &pic_in, &pic_out);
-	
+
 	return frame_size;
 }
-
-
