@@ -1,6 +1,7 @@
 #include "usb_camera_frame_grabber.hpp"
 
-#include <stdio.h>
+#include <cstdio>
+#include <cstring>
 
 #include <iostream>
 
@@ -8,7 +9,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/opencv.hpp>
 
-void cameraFrameGrabber(CameraParameters* params, unsigned char* img, bool* imgReady, bool* prog_end)
+void cameraFrameGrabber(CameraParameters* params, unsigned char* img, bool* imgReady, bool* progEnd)
 {
 
     // Retrieving a handle to the camera device
@@ -17,7 +18,7 @@ void cameraFrameGrabber(CameraParameters* params, unsigned char* img, bool* imgR
     if (!cap.isOpened())
     {
         std::cout << "Could not open camera!\n";
-        *prog_end = true;
+        *progEnd = true;
     }
 
     // Set camera parameters
@@ -33,14 +34,14 @@ void cameraFrameGrabber(CameraParameters* params, unsigned char* img, bool* imgR
     cv::Mat frame;
 
     // Main loop for acquiring images from the camera
-    while (!(*prog_end))
+    while (!(*progEnd))
     {
 
         // Get image
         cap >> frame;  // get a new frame from camera
 
         // Copy to allocated memory from main
-        memcpy(img, frame.data, (params->height) * (params->width) * 3);
+        memcpy(img, frame.data, static_cast<size_t>(params->height) * params->width * 3);
 
         // Set ReadyRead: encoder can now process image
         *imgReady = true;

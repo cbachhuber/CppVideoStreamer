@@ -1,5 +1,7 @@
 #include "decoder.h"
 
+#include <cerrno>
+#include <cstdlib>
 #include <list>
 
 // Socket includes
@@ -9,19 +11,15 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-// Serial port includes
-#include <errno.h>  //Error number definitions
-
 #include <iomanip>
 
 #include <fcntl.h>    //File control definitions
 #include <termios.h>  //POSIX terminal control definitions
-#include <unistd.h>
 
 // #define ARDUINO_MSMT
-#define MSGLENGTH 30
+constexpr int kMsgLength = 30;
 
-void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
+void Decoder(const char* videoAddress, uint8_t** argbRaw, bool* /*newImg*/)
 {
     //---------------------------------------------------------------------------------------------------
     //----------------------------   Variable initializations
@@ -29,12 +27,15 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
     //---------------------------------------------------------------------------------------------------
 
     // Timekeeping
-    std::chrono::time_point<std::chrono::high_resolution_clock> overall_start, cc_end, timekeeper, decoding_start,
-        decoding_end;
+    std::chrono::time_point<std::chrono::high_resolution_clock> overallStart;
+    std::chrono::time_point<std::chrono::high_resolution_clock> ccEnd;
+    std::chrono::time_point<std::chrono::high_resolution_clock> timekeeper;
+    std::chrono::time_point<std::chrono::high_resolution_clock> decodingStart;
+    std::chrono::time_point<std::chrono::high_resolution_clock> decodingEnd;
 
     // Color conversion
-    SwsContext* m_pSwsCtxYuv2Bgra;
-    int* argb_stride;
+    SwsContext* swsCtxYuv2Bgra = nullptr;
+    int* argbStride = nullptr;
     int framecounter = 0;
 #ifdef ARTIFICIAL_DELAY
     std::list<AVPacket> pktlist;
@@ -46,7 +47,7 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
 #ifdef ARDUINO_MSMT
     // Arduino setup
     const char* ard_port = "/dev/ttyACM0";
-    char buf[MSGLENGTH] = {0};
+    char buf[kMsgLength] = {0};
     int ard;
     ard = open(ard_port, O_RDWR | O_NOCTTY);
 
@@ -118,9 +119,9 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
     //----------------------------------------------
     //---------------------------------------------------------------------------------------------------
     // Simple startup without retrieving any stream info
-    AVCodecContext* cctx;
-    const AVCodec* codec;
-    AVFrame* frame;
+    AVCodecContext* cctx = nullptr;
+    const AVCodec* codec = nullptr;
+    AVFrame* frame = nullptr;
 
 #if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(58, 9, 100)
     av_register_all();
@@ -133,7 +134,7 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
     cctx->height = height;
     cctx->pix_fmt = AV_PIX_FMT_YUV420P;
 
-    if (avcodec_open2(cctx, codec, NULL) < 0)
+    if (avcodec_open2(cctx, codec, nullptr) < 0)
     {
         std::cout << "Could not open decoder!\n";
         readyToQuit = true;
@@ -142,16 +143,16 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
     frame = av_frame_alloc();
 
     // Complex startup with retrieving stream info
-    int frameFinished;
-    AVFormatContext* fctx = NULL;
+    int frameFinished = 0;
+    AVFormatContext* fctx = nullptr;
 
     fctx = avformat_alloc_context();
 
     /* open input file, and allocate format context */
     std::cout << "Waiting for input..." << std::endl;
-    if (avformat_open_input(&fctx, video_address, NULL, NULL) < 0)
+    if (avformat_open_input(&fctx, videoAddress, nullptr, nullptr) < 0)
     {
-        fprintf(stderr, "Could not open source file %s\n", video_address);
+        fprintf(stderr, "Could not open source file %s\n", videoAddress);
         exit(1);
     }
 
@@ -159,19 +160,19 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
     //----------------------------   CSP conversion initialization
     //-------------------------------------
     //---------------------------------------------------------------------------------------------------
-    m_pSwsCtxYuv2Bgra = sws_getContext(
-        width, height, AV_PIX_FMT_YUV420P, targetWidth, targetHeight, AV_PIX_FMT_RGBA, SWS_BILINEAR, NULL, NULL, NULL);
+    swsCtxYuv2Bgra = sws_getContext(
+        width, height, AV_PIX_FMT_YUV420P, targetWidth, targetHeight, AV_PIX_FMT_RGBA, SWS_BILINEAR, nullptr, nullptr, nullptr);
 
-    uint8_t* argb_data = (uint8_t*)malloc(targetWidth * targetHeight * 4 * sizeof(uint8_t));
-    argb_raw[0] = argb_data;
-    argb_raw[1] = argb_data + targetWidth * targetHeight;
-    argb_raw[2] = argb_data + targetWidth * targetHeight * 2;
-    argb_raw[3] = argb_data + targetWidth * targetHeight * 3;
-    argb_stride = (int*)malloc(sizeof(int) * 1);
-    argb_stride[0] = 4 * targetWidth;
+    auto* argbData = static_cast<uint8_t*>(malloc(static_cast<size_t>(targetWidth) * targetHeight * 4 * sizeof(uint8_t)));
+    argbRaw[0] = argbData;
+    argbRaw[1] = argbData + static_cast<ptrdiff_t>(targetWidth) * targetHeight;
+    argbRaw[2] = argbData + static_cast<ptrdiff_t>(targetWidth) * targetHeight * 2;
+    argbRaw[3] = argbData + static_cast<ptrdiff_t>(targetWidth) * targetHeight * 3;
+    argbStride = static_cast<int*>(malloc(sizeof(int) * 1));
+    argbStride[0] = 4 * targetWidth;
 
     timekeeper = std::chrono::high_resolution_clock::now();
-    overall_start = std::chrono::high_resolution_clock::now();
+    overallStart = std::chrono::high_resolution_clock::now();
 
     //---------------------------------------------------------------------------------------------------
     //-----------------------------------------   Main Loop
@@ -181,14 +182,15 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
     while (!readyToQuit)
     {
         AVPacket* pkt = av_packet_alloc();
-        int ret = av_read_frame(fctx, pkt);
+        const int ret = av_read_frame(fctx, pkt);
         // Packets with a size equal to 100
         // bytes are dummy packets.
         // These packets just push the actual
         // packets through av_read_frame. We
         // don't want to
         // process them.
-        if ((ret >= 0) && (pkt->size > 100))
+        constexpr int kMinPacketSize = 100;
+        if ((ret >= 0) && (pkt->size > kMinPacketSize))
         {
 
 #ifdef ARTIFICIAL_DELAY
@@ -203,23 +205,27 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
                 else
                 {
                     while (pktlist.size() >= listlength)
+                    {
                         pktlist.pop_front();
+                    }
                     continue;
                 }
             }
 #endif
 
             framecounter++;
-            decoding_start = std::chrono::high_resolution_clock::now();
+            decodingStart = std::chrono::high_resolution_clock::now();
             decode(cctx, frame, &frameFinished, pkt);
-            decoding_end = std::chrono::high_resolution_clock::now();
-            sws_scale(m_pSwsCtxYuv2Bgra, frame->data, frame->linesize, 0, cctx->height, argb_raw, argb_stride);
-            cc_end = std::chrono::high_resolution_clock::now();
+            decodingEnd = std::chrono::high_resolution_clock::now();
+            sws_scale(swsCtxYuv2Bgra, frame->data, frame->linesize, 0, cctx->height, argbRaw, argbStride);
+            ccEnd = std::chrono::high_resolution_clock::now();
             newImage = true;
 
 #ifdef ARTIFICIAL_DELAY
-            if (pktlist.size() > 0)
+            if (!pktlist.empty())
+            {
                 pktlist.pop_front();
+            }
 #endif
 
 #ifdef ARDUINO_MSMT
@@ -242,15 +248,17 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
                 std::cout << strbuf;
             }
 #else
-            if (framecounter % (int)(60 / 5) == 0)
+            constexpr int kFps = 60;
+            constexpr int kPrintInterval = 5;
+            if (framecounter % (kFps / kPrintInterval) == 0)
             {
                 std::cout
                     << "\r"
                     << "rb=" << pkt->size << "B, "
                     << "t_dec="
-                    << std::chrono::duration_cast<std::chrono::microseconds>(decoding_end - decoding_start).count()
+                    << std::chrono::duration_cast<std::chrono::microseconds>(decodingEnd - decodingStart).count()
                     << "us, t_cc="
-                    << std::chrono::duration_cast<std::chrono::microseconds>(cc_end - decoding_end).count()
+                    << std::chrono::duration_cast<std::chrono::microseconds>(ccEnd - decodingEnd).count()
                     << std::flush;
             }
 #endif
@@ -268,18 +276,18 @@ void Decoder(const char* video_address, uint8_t** argb_raw, bool* newImg)
     close(ard);
 #endif
 
-    sws_freeContext(m_pSwsCtxYuv2Bgra);
-    free(argb_raw);
-    free(argb_stride);
+    sws_freeContext(swsCtxYuv2Bgra);
+    free(reinterpret_cast<void*>(argbRaw));
+    free(argbStride);
 
     std::cout << "Successfully terminated decoder thread" << std::endl;
 }
 
-int decode(AVCodecContext* avctx, AVFrame* frame, int* got_frame, AVPacket* pkt)
+int decode(AVCodecContext* avctx, AVFrame* frame, int* gotFrame, AVPacket* pkt)
 {
-    int ret;
+    int ret = 0;
 
-    *got_frame = 0;
+    *gotFrame = 0;
 
     if (pkt)
     {
@@ -289,14 +297,20 @@ int decode(AVCodecContext* avctx, AVFrame* frame, int* got_frame, AVPacket* pkt)
         // decoded frames with
         // avcodec_receive_frame() until done.
         if (ret < 0)
+        {
             return ret == AVERROR_EOF ? 0 : ret;
+        }
     }
 
     ret = avcodec_receive_frame(avctx, frame);
     if (ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EOF)
+    {
         return ret;
+    }
     if (ret >= 0)
-        *got_frame = 1;
+    {
+        *gotFrame = 1;
+    }
 
     return 0;
 }

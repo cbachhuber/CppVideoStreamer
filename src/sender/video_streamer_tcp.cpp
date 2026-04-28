@@ -4,9 +4,9 @@
 #include "usb_camera_frame_grabber.hpp"
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include <chrono>
 #include <iomanip>
@@ -21,27 +21,32 @@
 
 // Parses the command line arguments and sets up the camera and encoder objects
 // Returns 1 on success, 0 on failure
-int argumentParser(int, char**, TcpSocket*, CameraParameters*, Encoder*);
+int argumentParser(int argc, char** argv, TcpSocket* sock, CameraParameters* camParams, Encoder* enc);
 
 int main(int argc, char* argv[])
 {
     // Variable initializations
-    bool prog_end = false,  // Shared between threads to signal program shutdown
-        imgReady = false;   // Synchronizes cameraFrameGrabber and encoder
+    bool progEnd = false;  // Shared between threads to signal program shutdown
+    bool imgReady = false;   // Synchronizes cameraFrameGrabber and encoder
     int framecounter = 0;
-    std::chrono::time_point<std::chrono::high_resolution_clock> enc_start, enc_end, timekeeper, overall_start;
+    std::chrono::time_point<std::chrono::high_resolution_clock> encStart;
+    std::chrono::time_point<std::chrono::high_resolution_clock> encEnd;
+    std::chrono::time_point<std::chrono::high_resolution_clock> timekeeper;
+    std::chrono::time_point<std::chrono::high_resolution_clock> overallStart;
 
     // Main objects: camera parameters, encoder and tcp Socket
-    CameraParameters cam_params;
+    CameraParameters camParams {};
     Encoder enc;
     TcpSocket sock;
 
     // Parse command line arguments
-    if (!argumentParser(argc, argv, &sock, &cam_params, &enc))
+    if (!argumentParser(argc, argv, &sock, &camParams, &enc))
+    {
         return -1;
+    }
 
     // Allocate memory for raw image
-    unsigned char* img = (unsigned char*)malloc(cam_params.width * cam_params.height * 3);
+    auto* img = static_cast<unsigned char*>(malloc(static_cast<size_t>(camParams.width) * camParams.height * 3));
 
     // Listen for connection request
     if (!sock.listenForLocalConnection())
@@ -50,55 +55,61 @@ int main(int argc, char* argv[])
     }
 
     // Start camera frame grabber thread
-    std::thread camFrameGrabber(cameraFrameGrabber, &cam_params, img, &imgReady, &prog_end);
+    std::thread camFrameGrabber(cameraFrameGrabber, &camParams, img, &imgReady, &progEnd);
 
     // Main Loop
     timekeeper = std::chrono::high_resolution_clock::now();
-    while (!prog_end)
+    while (!progEnd)
     {
         // First, wait for imgReady. Gets true once the cameraFrameGrabber has put a new image into the shared memory
         // img
         if (framecounter == 1)
-            overall_start = std::chrono::high_resolution_clock::now();  // Start measuring, when we have the first image
-        while ((!imgReady) && !prog_end)
+        {
+            overallStart = std::chrono::high_resolution_clock::now();  // Start measuring, when we have the first image
+        }
+        while ((!imgReady) && !progEnd)
+        {
             std::this_thread::sleep_for(std::chrono::microseconds(10));
-        if (prog_end)
+        }
+        if (progEnd)
+        {
             break;
+        }
 
         // Encode
-        enc_start = std::chrono::high_resolution_clock::now();
-        int frame_size = enc.encode(img, &imgReady);
-        enc_end = std::chrono::high_resolution_clock::now();
+        encStart = std::chrono::high_resolution_clock::now();
+        const int frameSize = enc.encode(img, &imgReady);
+        encEnd = std::chrono::high_resolution_clock::now();
 
         // Send using tcpSocket
-        int sentbytes_frame = 0;
-        for (int i = 0; i < enc.num_nals; i++)
+        int sentbytesFrame = 0;
+        for (int i = 0; i < enc.numNals; i++)
         {
 
-            int sentbytes_nal = sock.send(enc.nals[i].p_payload, enc.nals[i].i_payload);
+            const int sentbytesNal = sock.send(enc.nals[i].p_payload, enc.nals[i].i_payload);
 
-            if (sentbytes_nal < 0)
+            if (sentbytesNal < 0)
             {
                 // Video receiver shut down connection, quit this program
-                prog_end = true;
+                progEnd = true;
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 std::cout << "\n\nClient closed TCP connection. Closing program.\n\n";
                 break;
             }
 
-            sentbytes_frame += sentbytes_nal;
+            sentbytesFrame += sentbytesNal;
         }
 
         timekeeper = std::chrono::high_resolution_clock::now();
 
         // Put info to terminal
-        if ((framecounter % ((int)(cam_params.fps) / 5)) == 0)
+        if ((framecounter % (static_cast<int>(camParams.fps) / 5)) == 0)
         {
             std::cout << "\rt_enc="
-                      << std::chrono::duration_cast<std::chrono::microseconds>(enc_end - enc_start).count()
-                      << "us, fs=" << frame_size << "b, sb=" << sentbytes_frame << "b, fps="
-                      << (double)(framecounter * 1000) /
-                             (std::chrono::duration_cast<std::chrono::milliseconds>(timekeeper - overall_start).count())
+                      << std::chrono::duration_cast<std::chrono::microseconds>(encEnd - encStart).count()
+                      << "us, fs=" << frameSize << "b, sb=" << sentbytesFrame << "b, fps="
+                      << (static_cast<double>(framecounter) * 1000) /
+                             static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(timekeeper - overallStart).count())
                       << "Hz.        " << std::flush;
         }
 
@@ -109,28 +120,28 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-int argumentParser(int argc, char* argv[], TcpSocket* sock, CameraParameters* cam_params, Encoder* enc)
+int argumentParser(int argc, char* argv[], TcpSocket* sock, CameraParameters* camParams, Encoder* enc)
 {
 
     std::stringstream ss;
     cv::FileStorage conf;
     std::string temp;
-    char* default_path = (char*)"../src/config.yaml";
+    const char* defaultPath = "../src/config.yaml";
 
     ss << "Usage: '" << argv[0] << " [path/to/config.yaml]'\n"
        << "[path/to/config.yaml] path to config file, per default in src/config.yaml.\n"
        << "Example: '" << argv[0] << " ../src/config.yaml'. \n\n";
-    std::string msg = ss.str();
+    const std::string msg = ss.str();
 
     switch (argc)
     {
         case 1:
-            std::cout << "Called without arguments. Defaulting to path " << default_path << " for config file.\n"
+            std::cout << "Called without arguments. Defaulting to path " << defaultPath << " for config file.\n"
                       << "Use 'ffplay -probesize 32 -sync ext tcp://127.0.0.1:5001' to view locally (or this "
                          "computer's IP address instead of 127.0.0.1 to view somewhere else).\n"
                       << "Careful, ffplay introduces noticeable lag through buffering\n\n";
             std::cout << msg << std::endl;
-            conf = cv::FileStorage(default_path, cv::FileStorage::READ);
+            conf = cv::FileStorage(defaultPath, cv::FileStorage::READ);
             break;
         case 2:
             conf = cv::FileStorage(argv[1], cv::FileStorage::READ);
@@ -142,25 +153,25 @@ int argumentParser(int argc, char* argv[], TcpSocket* sock, CameraParameters* ca
 
     // Get values from config file
     *sock = TcpSocket(conf["port"]);
-    cam_params->eye = (char*)malloc(99);
+    camParams->eye = static_cast<char*>(malloc(99));
 
-    temp = (std::string)conf["camera.name"];
-    temp.copy(cam_params->eye, 99);
-    cam_params->width = 2 * ((int)conf["camera.width"]) / 2;
-    cam_params->height = 4 * ((int)conf["camera.height"]) / 4;
-    cam_params->sensor_width = conf["camera.sensor_width"];
-    cam_params->sensor_height = conf["camera.sensor_height"];
-    cam_params->fps = conf["camera.fps"];
-    cam_params->color_coeffs[0] = conf["camera.r_coeff"];
-    cam_params->color_coeffs[1] = conf["camera.g_coeff"];
-    cam_params->color_coeffs[2] = conf["camera.b_coeff"];
+    temp = static_cast<std::string>(conf["camera.name"]);
+    temp.copy(camParams->eye, 99);
+    camParams->width = 2 * (static_cast<int>(conf["camera.width"])) / 2;
+    camParams->height = 4 * (static_cast<int>(conf["camera.height"])) / 4;
+    camParams->sensor_width = conf["camera.sensor_width"];
+    camParams->sensor_height = conf["camera.sensor_height"];
+    camParams->fps = conf["camera.fps"];
+    camParams->color_coeffs[0] = conf["camera.r_coeff"];
+    camParams->color_coeffs[1] = conf["camera.g_coeff"];
+    camParams->color_coeffs[2] = conf["camera.b_coeff"];
 
     *enc = Encoder(conf["camera.width"], conf["camera.height"], conf["video.width"], conf["video.height"], conf["fps"]);
 
     // Computing remaining values
-    cam_params->t_exp = (int)(1000000 / (cam_params->fps * 1.005));
-    cam_params->xoff = 16 * ((cam_params->sensor_width - cam_params->width) / (16 * 2));
-    cam_params->yoff = 16 * ((cam_params->sensor_height - cam_params->height) / (16 * 2));
+    camParams->t_exp = static_cast<int>(1000000 / (camParams->fps * 1.005));
+    camParams->xoff = 16 * ((camParams->sensor_width - camParams->width) / (16 * 2));
+    camParams->yoff = 16 * ((camParams->sensor_height - camParams->height) / (16 * 2));
 
     return 1;
 }

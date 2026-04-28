@@ -12,4 +12,4 @@ struct CameraParameters
     float color_coeffs[3];
 };
 
-void cameraFrameGrabber(CameraParameters* params, unsigned char* img, bool* readyRead, bool* prog_end);
+void cameraFrameGrabber(CameraParameters* params, unsigned char* img, bool* imgReady, bool* progEnd);

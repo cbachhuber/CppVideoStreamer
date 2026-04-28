@@ -15,7 +15,7 @@ class TcpSocket
 
     // Listens for a TCP connection on a local port returns 1 on successful connection, 0 on error
     int listenForLocalConnection();
-    int send(unsigned char*, int);
+    int send(unsigned char*, int) const;
 };
 
 #endif
