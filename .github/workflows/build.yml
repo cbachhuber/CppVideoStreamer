@@ -16,9 +16,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: check out git repository
-      uses: actions/checkout@v2
-    - name: install dependencies
-      run: sudo apt update && sudo apt install -y build-essential cmake ffmpeg libx264-dev x264 libopencv-dev libva-dev libsdl2-dev
+      uses: actions/checkout@v4
+    - name: cache apt packages
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: build-essential cmake ffmpeg libx264-dev x264 libopencv-dev libva-dev libsdl2-dev
+        version: 1.0 # bump this if you change the package list to invalidate the cache
     - name: configure
       run: mkdir -p build && cd build && cmake ..
     - name: build
