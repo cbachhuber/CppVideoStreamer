@@ -18,15 +18,12 @@ jobs:
     - name: check out git repository
       uses: actions/checkout@v4
     - name: cache apt packages
-      uses: awalsh128/cache-apt-pkgs-action@latest
+      uses: actions/cache@v4
       with:
-        packages: build-essential cmake ffmpeg libx264-dev x264 libopencv-dev libva-dev libsdl2-dev
-        version: ${{ matrix.os }}-1.0 # bump this if you change the package list to invalidate the cache
-    - name: cache development apt packages
-      uses: awalsh128/cache-apt-pkgs-action@latest
-      with:
-        packages: clang-tidy
-        version: ${{ matrix.os }}-1.0 # bump this if you change the package list to invalidate the cache
+        path: /var/cache/apt/archives
+        key: apt-${{ matrix.os }}-${{ hashFiles('.github/workflows/build.yml') }}
+    - name: install dependencies
+      run: sudo apt-get update && sudo apt-get install -y build-essential cmake ffmpeg libx264-dev x264 libopencv-dev libva-dev libsdl2-dev clang-tidy
     - name: configure
       run: mkdir -p build && cd build && cmake .. -DENABLE_CLANG_TIDY=ON
     - name: build
