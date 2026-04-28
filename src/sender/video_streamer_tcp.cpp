@@ -20,8 +20,8 @@
 #include "tcp_socket.hpp"
 
 // Parses the command line arguments and sets up the camera and encoder objects
-// Returns 1 on success, 0 on failure
-int argumentParser(int argc, char** argv, TcpSocket* sock, CameraParameters* camParams, Encoder* enc);
+// Returns true on success, false on failure
+bool parseArguments(int argc, char** argv, TcpSocket* sock, CameraParameters* camParams, Encoder* enc);
 
 int main(int argc, char* argv[])
 {
@@ -39,8 +39,7 @@ int main(int argc, char* argv[])
     Encoder enc;
     TcpSocket sock;
 
-    // Parse command line arguments
-    if (!argumentParser(argc, argv, &sock, &camParams, &enc))
+    if (!parseArguments(argc, argv, &sock, &camParams, &enc))
     {
         return -1;
     }
@@ -48,7 +47,6 @@ int main(int argc, char* argv[])
     // Allocate memory for raw image
     auto* img = static_cast<unsigned char*>(malloc(static_cast<size_t>(camParams.width) * camParams.height * 3));
 
-    // Listen for connection request
     if (!sock.listenForLocalConnection())
     {
         return -1;
@@ -69,7 +67,8 @@ int main(int argc, char* argv[])
         }
         while ((!imgReady) && !progEnd)
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(10));
+            const auto sleepDuration = 10;
+            std::this_thread::sleep_for(std::chrono::microseconds(sleepDuration));
         }
         if (progEnd)
         {
@@ -92,7 +91,8 @@ int main(int argc, char* argv[])
             {
                 // Video receiver shut down connection, quit this program
                 progEnd = true;
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                const auto tcpClosureTimeout = 100;
+                std::this_thread::sleep_for(std::chrono::milliseconds(tcpClosureTimeout));
                 std::cout << "\n\nClient closed TCP connection. Closing program.\n\n";
                 break;
             }
@@ -103,12 +103,14 @@ int main(int argc, char* argv[])
         timekeeper = std::chrono::high_resolution_clock::now();
 
         // Put info to terminal
-        if ((framecounter % (static_cast<int>(camParams.fps) / 5)) == 0)
+        const auto updateFrequency = 5;
+        if ((framecounter % (static_cast<int>(camParams.fps) / updateFrequency)) == 0)
         {
+            const auto millisecondsToSeconds = 1000;
             std::cout << "\rt_enc="
                       << std::chrono::duration_cast<std::chrono::microseconds>(encEnd - encStart).count()
                       << "us, fs=" << frameSize << "b, sb=" << sentbytesFrame << "b, fps="
-                      << (static_cast<double>(framecounter) * 1000) /
+                      << (static_cast<double>(framecounter) * millisecondsToSeconds) /
                              static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(timekeeper - overallStart).count())
                       << "Hz.        " << std::flush;
         }
@@ -120,7 +122,7 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-int argumentParser(int argc, char* argv[], TcpSocket* sock, CameraParameters* camParams, Encoder* enc)
+bool parseArguments(int argc, char* argv[], TcpSocket* sock, CameraParameters* camParams, Encoder* enc)
 {
 
     std::stringstream ss;
@@ -148,15 +150,16 @@ int argumentParser(int argc, char* argv[], TcpSocket* sock, CameraParameters* ca
             break;
         default:
             std::cout << msg << std::endl;
-            return 0;
+            return false;
     }
 
     // Get values from config file
     *sock = TcpSocket(conf["port"]);
-    camParams->eye = static_cast<char*>(malloc(99));
+    const auto bytesForEyeName = 99;
+    camParams->eye = static_cast<char*>(malloc(bytesForEyeName));
 
     temp = static_cast<std::string>(conf["camera.name"]);
-    temp.copy(camParams->eye, 99);
+    temp.copy(camParams->eye, bytesForEyeName);
     camParams->width = 2 * (static_cast<int>(conf["camera.width"])) / 2;
     camParams->height = 4 * (static_cast<int>(conf["camera.height"])) / 4;
     camParams->sensor_width = conf["camera.sensor_width"];
@@ -169,9 +172,12 @@ int argumentParser(int argc, char* argv[], TcpSocket* sock, CameraParameters* ca
     *enc = Encoder(conf["camera.width"], conf["camera.height"], conf["video.width"], conf["video.height"], conf["fps"]);
 
     // Computing remaining values
-    camParams->t_exp = static_cast<int>(1000000 / (camParams->fps * 1.005));
-    camParams->xoff = 16 * ((camParams->sensor_width - camParams->width) / (16 * 2));
-    camParams->yoff = 16 * ((camParams->sensor_height - camParams->height) / (16 * 2));
+    const auto microsecondsToSeconds = 1000000;
+    const auto exposureTimeFactor = 1.005;  // Empirically determined factor to get the actual exposure time slightly below the frame time, to avoid dropped frames
+    const auto offsetGridSize = 16;
+    camParams->t_exp = static_cast<int>(microsecondsToSeconds / (camParams->fps * exposureTimeFactor));
+    camParams->xoff = offsetGridSize * ((camParams->sensor_width - camParams->width) / (offsetGridSize * 2));
+    camParams->yoff = offsetGridSize * ((camParams->sensor_height - camParams->height) / (offsetGridSize * 2));
 
-    return 1;
+    return true;
 }

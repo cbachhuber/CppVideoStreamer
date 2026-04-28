@@ -13,13 +13,13 @@
 const char* videoUrl = "tcp://127.0.0.1:5001";
 // const char * videoUrl = "tcp://10.152.4.207:5000";
 // const char * videoUrl = "tcp://10.152.4.195:5000";
-int port = 5002;
+const int port = 5002;
 const char* targetIp = "127.0.0.1";
 bool video = true;
 bool fullscreen = false;
 int vsync = 1;
 const int targetWidth = 1280, targetHeight = 720;
-int height = 720, width = 1280;  // will be overwritten by the video dimensions in the decoder; definition here
+int height = targetHeight, width = targetWidth;  // will be overwritten by the video dimensions in the decoder; definition here
                                  // necessary if no video is used
 
 bool readyToQuit = false;                                                                    // Quits all threads
@@ -104,7 +104,8 @@ int main(int argc, char* argv[])
         //		cout << "Waiting for first decoded image..." << endl;
         while (!newImage)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+            const auto sleepDurationMs = 20;
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleepDurationMs));
         }
         std::cout << "Got first image, now displaying" << std::endl;
     }
@@ -115,20 +116,20 @@ int main(int argc, char* argv[])
                                        targetWidth,
                                        targetHeight,
                                        SDL_WINDOW_OPENGL);
-    if (!win)
+    if (win == nullptr)
     {
         std::cout << "Failed to create Window! SDL Error :" << SDL_GetError() << std::endl;
     }
 
     SDL_Renderer* ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
-    if (!ren)
+    if (ren == nullptr)
     {
         std::cout << "Failed to create Renderer! SDL Error :" << SDL_GetError() << std::endl;
     }
 
     SDL_Texture* tex =
         SDL_CreateTexture(ren, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, targetWidth, targetHeight);
-    if (!tex)
+    if (tex == nullptr)
     {
         std::cout << "Failed to create Texture! SDL Error :" << SDL_GetError() << std::endl;
     }
@@ -145,7 +146,7 @@ int main(int argc, char* argv[])
     while (!readyToQuit)
     {
         // Polling for user signal to end
-        while (SDL_PollEvent(event))
+        while (static_cast<bool>(SDL_PollEvent(event)))
         {
             if (event->type == SDL_KEYDOWN)
             {

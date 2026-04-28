@@ -13,8 +13,8 @@ class TcpSocket
     TcpSocket() {};
     ~TcpSocket();
 
-    // Listens for a TCP connection on a local port returns 1 on successful connection, 0 on error
-    int listenForLocalConnection();
+    // Listens for a TCP connection on a local port returns true on successful connection, false on error
+    bool listenForLocalConnection();
     int send(unsigned char*, int) const;
 };
 

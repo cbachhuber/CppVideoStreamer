@@ -23,7 +23,7 @@ TcpSocket::~TcpSocket()
     std::cout << "Socket closed.\n";
 }
 
-int TcpSocket::listenForLocalConnection()
+bool TcpSocket::listenForLocalConnection()
 {
 
     int tempSockId = 0;
@@ -35,7 +35,7 @@ int TcpSocket::listenForLocalConnection()
     if (tempSockId < 0)
     {
         std::cout << "Could not create socket!\n";  // SOCK_STREAM invokes TCP, SOCK_DGRAM would invoke UDP
-        return 0;
+        return false;
     }
 
     memset(reinterpret_cast<char*>(&remaddr), 0, sizeof(remaddr));
@@ -47,24 +47,25 @@ int TcpSocket::listenForLocalConnection()
     if (bind(tempSockId, reinterpret_cast<struct sockaddr*>(&remaddr), sizeof(remaddr)) < 0)
     {
         std::cout << "Error on socket binding!\n";
-        return 0;
+        return false;
     }
 
-    listen(tempSockId, 5);
+    const auto maximumQueueLength = 5;
+    listen(tempSockId, maximumQueueLength);
     clilen = sizeof(cliAddr);
     std::cout << "Waiting for TCP connection...\n";
     sockID = accept(tempSockId, reinterpret_cast<struct sockaddr*>(&cliAddr), &clilen);
     if (sockID < 0)
     {
         std::cout << "Error on accepting TCP connection!\n";
-        return 0;
+        return false;
     }
 
     // Temporary socket not needed anymore, closing
     close(tempSockId);
     std::cout << "Established TCP connection!\n";
 
-    return 1;
+    return true;
 }
 
 int TcpSocket::send(unsigned char* addr, int len) const
