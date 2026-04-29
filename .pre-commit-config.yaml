@@ -47,3 +47,7 @@ repos:
       - id: check-snake-case
       - id: check-no-dashes
       - id: check-non-existing-and-duplicate-excludes
+  - repo: https://github.com/mattlqx/pre-commit-search-and-replace
+    rev: v1.1.9
+    hooks:
+    - id: search-and-replace
