@@ -47,3 +47,7 @@ repos:
       - id: check-snake-case
       - id: check-no-dashes
       - id: check-non-existing-and-duplicate-excludes
+  - repo: https://github.com/cbachhuber/pre-commit-search-and-replace
+    rev: 4d445a3fbc6e823b977c3e1a9ba90555cc7aeebd
+    hooks:
+    - id: search-and-replace

@@ -1,0 +1,6 @@
+- search: /Something [bB]ad/
+  replacement: Something Good
+- search: foobar
+  insensitive: true
+  replacement: FOOBAR
+- search: JustFailIfThisStringIsFound
