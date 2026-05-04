@@ -893,14 +893,14 @@ class xiAPIplus_Camera
     float GetTemperatureSensor_Minimum();
     float GetTemperatureSensor_Increment();
 
-    // Camera housing tepmerature (XI_PRM_HOUS_TEMP)
+    // Camera housing temperature (XI_PRM_HOUS_TEMP)
 
     float GetTemperatureHousing();
     float GetTemperatureHousing_Maximum();
     float GetTemperatureHousing_Minimum();
     float GetTemperatureHousing_Increment();
 
-    // Camera housing back side tepmerature (XI_PRM_HOUS_BACK_SIDE_TEMP)
+    // Camera housing back side temperature (XI_PRM_HOUS_BACK_SIDE_TEMP)
 
     float GetTemperatureHousingBackSide();
     float GetTemperatureHousingBackSide_Maximum();
