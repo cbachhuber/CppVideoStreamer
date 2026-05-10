@@ -3854,7 +3854,7 @@ float xiAPIplus_Camera::GetTemperatureSensor_Increment()
     return val;
 }
 
-// Camera housing tepmerature (XI_PRM_HOUS_TEMP)
+// Camera housing temperature (XI_PRM_HOUS_TEMP)
 float xiAPIplus_Camera::GetTemperatureHousing()
 {
     float val = 0;
@@ -3911,7 +3911,7 @@ float xiAPIplus_Camera::GetTemperatureHousing_Increment()
     return val;
 }
 
-// Camera housing back side tepmerature (XI_PRM_HOUS_BACK_SIDE_TEMP)
+// Camera housing back side temperature (XI_PRM_HOUS_BACK_SIDE_TEMP)
 float xiAPIplus_Camera::GetTemperatureHousingBackSide()
 {
     float val = 0;

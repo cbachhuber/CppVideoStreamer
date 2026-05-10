@@ -211,22 +211,17 @@ int main(int argc, char* argv[])
             SDL_LockTexture(tex, nullptr, reinterpret_cast<void**>(pixels), test.data());
 
             // Copy decoded image into retrieved pointer from locking
-            //			m_start_time = std::chrono::high_resolution_clock::now();
             if (video)
             {
                 memcpy(*pixels, *argbSrc, static_cast<size_t>(targetWidth) * targetHeight * 4 * sizeof(uint8_t));
             }
-            //			m_end_time = std::chrono::high_resolution_clock::now();
 
             SDL_UnlockTexture(tex);
             SDL_RenderClear(ren);
             SDL_RenderCopy(ren, tex, nullptr, nullptr);
             SDL_RenderPresent(ren);
 
-            // Reset the newImage flag
             newImage = false;
-            //			std::cout << "t_cpy=" <<
-            // std::chrono::duration_cast<std::chrono::microseconds>(m_end_time - m_start_time).count() << "\n";
         }
     }
 
